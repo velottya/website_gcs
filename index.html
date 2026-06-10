@@ -1,0 +1,1129 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PT Gresik Cipta Sejahtera</title>
+  <link rel="icon" type="image/png" href="logo-gcs.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --hijau-tua:#0F261F;--hijau-mid:#2F6C3F;--hijau-terang:#347645;
+      --emas:#DAA628;--emas-terang:#EFC719;
+      --putih:#FFFFFF;--abu:#f4f4f4;--teks:#1a2a1f;
+      --font-j:'Montserrat',sans-serif;--font-b:'Plus Jakarta Sans',sans-serif;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:var(--font-b);background:var(--putih);color:var(--teks);overflow-x:hidden}
+    h1,h2,h3{font-family:var(--font-j)}
+    h1{font-weight:900}h2{font-weight:900}h3{font-weight:700}
+    p{font-weight:400;line-height:1.75}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-track{background:var(--hijau-tua)}
+    ::-webkit-scrollbar-thumb{background:var(--emas);border-radius:3px}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeLeft{from{opacity:0;transform:translateX(-40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes fadeRight{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+    @keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+    @keyframes waveFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    @keyframes rotateSlow{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+    @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(218,166,40,.5)}50%{box-shadow:0 0 0 12px rgba(218,166,40,0)}}
+    @keyframes shimmer{0%{background-position:0% center}100%{background-position:200% center}}
+    @keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(255,68,68,.5)}50%{box-shadow:0 0 0 5px rgba(255,68,68,0)}}
+
+    .reveal{opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal-left{opacity:0;transform:translateX(-50px);transition:opacity .7s ease,transform .7s ease}
+    .reveal-left.visible{opacity:1;transform:translateX(0)}
+    .reveal-right{opacity:0;transform:translateX(50px);transition:opacity .7s ease,transform .7s ease}
+    .reveal-right.visible{opacity:1;transform:translateX(0)}
+    .reveal-scale{opacity:0;transform:scale(.88);transition:opacity .7s ease,transform .7s ease}
+    .reveal-scale.visible{opacity:1;transform:scale(1)}
+
+    /* ── NAVBAR ── */
+    #navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:transparent;transition:background .4s,box-shadow .4s}
+    #navbar.scrolled{background:rgba(15,38,31,.97);box-shadow:0 2px 20px rgba(0,0,0,.4)}
+    .nav-inner{max-width:1360px;margin:auto;padding:14px 48px;display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{display:flex;align-items:center;gap:11px;text-decoration:none}
+    .nav-logo img{height:40px;transition:filter .3s}
+    #navbar:not(.scrolled) .nav-logo img{filter:brightness(0) invert(1)}
+    .nav-logo span{font-family:var(--font-j);font-weight:900;font-size:.78rem;color:var(--putih);white-space:nowrap;letter-spacing:.01em}
+    .nav-links{display:flex;gap:24px;list-style:none}
+    .nav-links a{
+      color:rgba(255,255,255,.88);text-decoration:none;
+      font-family:var(--font-j);font-weight:900;font-size:.62rem;
+      letter-spacing:.08em;text-transform:uppercase;
+      position:relative;transition:color .3s;
+    }
+    .nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--emas);transition:width .3s}
+    .nav-links a:hover{color:var(--emas)}
+    .nav-links a:hover::after{width:100%}
+    .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none}
+    .hamburger span{width:26px;height:2px;background:var(--putih);border-radius:2px;transition:all .3s;display:block}
+
+    /* ── HERO ── */
+    #hero{position:relative;min-height:100vh;display:flex;align-items:center;overflow:hidden}
+    .hero-bg{position:absolute;inset:0;background-image:url('gedung-gcs.jpg');background-size:cover;background-position:center}
+    .hero-overlay{position:absolute;inset:0;background:linear-gradient(135deg,rgba(15,38,31,.90) 0%,rgba(15,38,31,.72) 55%,rgba(15,38,31,.50) 100%)}
+    .hero-bg-decor{position:absolute;inset:0;background-image:radial-gradient(circle at 20% 50%,rgba(47,108,63,.25) 0%,transparent 60%),radial-gradient(circle at 80% 20%,rgba(218,166,40,.12) 0%,transparent 50%)}
+    .hero-supergrafis{position:absolute;bottom:-20px;right:-60px;width:640px;opacity:.82;animation:waveFloat 6s ease-in-out infinite;pointer-events:none}
+    .hero-content{position:relative;z-index:2;max-width:1360px;margin:auto;padding:140px 48px 100px;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+    .hero-tag{display:inline-block;background:rgba(218,166,40,.18);border:1px solid var(--emas);color:var(--emas);font-family:var(--font-j);font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:6px 16px;border-radius:2px;margin-bottom:20px;animation:fadeLeft .8s ease .2s both}
+    .hero-title{font-family:var(--font-j);font-weight:900;font-size:clamp(2.2rem,5vw,3.8rem);color:var(--putih);line-height:1.05;margin-bottom:14px;animation:fadeLeft .8s ease .4s both}
+    .hero-title .emas{color:var(--emas)}
+    .hero-subtitle{font-size:1rem;color:rgba(255,255,255,.75);margin-bottom:36px;animation:fadeLeft .8s ease .6s both;line-height:1.75}
+    .hero-cta{display:flex;gap:16px;flex-wrap:wrap;animation:fadeLeft .8s ease .8s both}
+    .btn-primary{background:var(--emas);color:var(--hijau-tua);border:none;padding:13px 28px;font-family:var(--font-j);font-weight:900;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:none;display:inline-block;border-radius:3px;transition:background .3s,transform .2s,box-shadow .3s;position:relative;overflow:hidden}
+    .btn-primary::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);transform:translateX(-100%);transition:transform .5s}
+    .btn-primary:hover::after{transform:translateX(100%)}
+    .btn-primary:hover{background:var(--emas-terang);transform:translateY(-2px);box-shadow:0 8px 24px rgba(218,166,40,.4)}
+    .btn-outline{background:transparent;color:var(--putih);border:2px solid rgba(255,255,255,.45);padding:11px 24px;font-family:var(--font-j);font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;text-decoration:none;display:inline-block;border-radius:3px;transition:all .3s}
+    .btn-outline:hover{border-color:var(--emas);color:var(--emas);transform:translateY(-2px)}
+    .hero-visual{display:flex;justify-content:center;align-items:center;animation:scaleIn 1s ease .3s both}
+    .hero-logo-wrap{position:relative;width:320px;height:320px;display:flex;align-items:center;justify-content:center}
+    .hero-ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(218,166,40,.2);animation:rotateSlow 20s linear infinite}
+    .hero-ring::after{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:8px;height:8px;background:var(--emas);border-radius:50%}
+    .hero-ring2{position:absolute;inset:28px;border-radius:50%;border:1px solid rgba(47,108,63,.35);animation:rotateSlow 14s linear infinite reverse}
+    .hero-logo-img{width:190px;filter:drop-shadow(0 0 40px rgba(218,166,40,.35));animation:waveFloat 5s ease-in-out infinite}
+    .scroll-indicator{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:.55;animation:fadeUp 1s ease 1.5s both}
+    .scroll-indicator span{font-family:var(--font-j);font-weight:700;font-size:.6rem;color:var(--putih);letter-spacing:.15em;text-transform:uppercase}
+    .scroll-arrow{width:20px;height:34px;border:2px solid rgba(255,255,255,.35);border-radius:12px;position:relative}
+    .scroll-arrow::after{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--putih);border-radius:50%;animation:fadeUp 1.5s ease infinite}
+
+    /* ── HUT BANNER (below hero) ── */
+    #hut-banner{background:linear-gradient(90deg,#0a1b14,#1a3a2e 50%,#0a1b14);border-top:1px solid rgba(218,166,40,.45);border-bottom:1px solid rgba(218,166,40,.45)}
+    .hut-strip{max-width:1200px;margin:auto;padding:18px 32px;display:flex;align-items:center;gap:22px}
+    .hut-strip-logo img{height:74px;filter:drop-shadow(0 0 14px rgba(218,166,40,.4))}
+    .hut-strip-div{width:1px;height:52px;background:rgba(218,166,40,.25);flex-shrink:0}
+    .hut-strip-body{flex:1}
+    .hut-strip-tag{font-family:var(--font-j);font-weight:700;font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--emas);display:flex;align-items:center;gap:8px;margin-bottom:5px}
+    .live-dot{width:7px;height:7px;background:#ff4444;border-radius:50%;animation:livePulse 1.5s ease infinite;flex-shrink:0}
+    .hut-strip-title{font-family:var(--font-j);font-weight:900;font-size:clamp(.92rem,2.2vw,1.42rem);color:var(--putih);margin-bottom:3px}
+    .hut-strip-title strong{color:var(--emas)}
+    .hut-strip-sub{font-size:.74rem;color:rgba(255,255,255,.48)}
+    .hut-strip-num{font-family:var(--font-j);font-weight:900;font-size:3.6rem;color:transparent;-webkit-text-stroke:1.5px rgba(218,166,40,.42);line-height:1;flex-shrink:0}
+
+    /* ── SECTION BASE ── */
+    section{position:relative;overflow:hidden}
+    .container{max-width:1360px;margin:auto;padding:0 48px}
+    .section-pad{padding:112px 0}
+    .section-label{font-family:var(--font-j);font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--emas);margin-bottom:10px;display:block}
+    .section-title{font-family:var(--font-j);font-weight:900;font-size:clamp(1.8rem,3.5vw,2.55rem);color:var(--hijau-tua);line-height:1.15;margin-bottom:14px}
+    .section-title.light{color:var(--putih)}
+    .section-title span{color:var(--emas)}
+    .section-line{width:52px;height:4px;background:linear-gradient(90deg,var(--emas),var(--emas-terang));margin-bottom:22px;border-radius:2px}
+    .section-line.center{margin:0 auto 22px}
+    .section-intro{font-size:.92rem;color:#4a5a50;max-width:640px;line-height:1.8}
+    .section-intro.center{margin:0 auto;text-align:center}
+    .section-intro.light{color:rgba(255,255,255,.75)}
+
+    /* ── TENTANG ── */
+    #tentang{background:var(--putih)}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
+    .about-img-frame{width:100%;height:440px;border-radius:4px;overflow:hidden;position:relative;background:#ffffff}
+    .about-photo-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:5px;width:100%;height:100%}
+    .about-photo-cell{overflow:hidden}
+    .about-photo-cell img{width:100%;height:100%;object-fit:cover;transition:transform .5s;display:block}
+    .about-photo-cell:hover img{transform:scale(1.07)}
+    .about-year-badge{position:absolute;bottom:-20px;right:-20px;width:100px;height:100px;background:var(--emas);border-radius:3px;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+    .about-year-badge .year{font-family:var(--font-j);font-weight:900;font-size:1.8rem;color:var(--hijau-tua);line-height:1}
+    .about-year-badge .year-label{font-size:.6rem;font-weight:700;color:var(--hijau-tua);letter-spacing:.1em;text-transform:uppercase}
+    .about-iso-badge{position:absolute;top:16px;right:-14px;background:var(--putih);padding:9px 13px;border-radius:4px;box-shadow:0 4px 20px rgba(0,0,0,.15);text-align:center}
+    .about-iso-badge .iso-t{font-family:var(--font-j);font-weight:900;font-size:.78rem;color:var(--hijau-tua)}
+    .about-iso-badge .iso-s{font-size:.62rem;color:var(--emas);font-weight:600}
+    .about-pillars{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:28px}
+    .about-pillar{background:var(--abu);border-left:3px solid var(--emas);padding:13px 16px;border-radius:2px;transition:all .3s}
+    .about-pillar:hover{background:var(--hijau-tua)}
+    .about-pillar:hover .pt{color:var(--putih)}
+    .about-pillar:hover .ps{color:rgba(255,255,255,.6)}
+    .pt{font-family:var(--font-j);font-weight:800;font-size:.81rem;color:var(--hijau-tua);margin-bottom:2px}
+    .ps{font-size:.71rem;color:#6a7a70}
+
+    /* ── VISI MISI ── */
+    #visimisi{background:var(--hijau-tua)}
+    .vm-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 0% 100%,rgba(47,108,63,.3) 0%,transparent 60%),radial-gradient(ellipse at 100% 0%,rgba(218,166,40,.08) 0%,transparent 50%)}
+    .vm-sg{position:absolute;bottom:0;left:0;width:320px;opacity:.08;transform:scaleX(-1);pointer-events:none}
+    /* Visi — centered statement */
+    .vm-visi{position:relative;z-index:2;max-width:760px;margin:0 auto 56px;text-align:center;padding:48px 52px;background:rgba(255,255,255,.05);border:1px solid rgba(218,166,40,.2);border-radius:4px}
+    .vm-visi-tag{font-family:var(--font-j);font-weight:700;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--emas);display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:22px}
+    .vm-visi-tag::before,.vm-visi-tag::after{content:'';flex:1;max-width:52px;height:1px;background:rgba(218,166,40,.4)}
+    .vm-visi-text{font-family:var(--font-b);font-size:1.08rem;color:rgba(255,255,255,.88);line-height:1.9;font-style:normal}
+    .vm-visi-text strong{color:var(--emas);font-style:normal}
+    /* Misi — 2×2 numbered cards */
+    .vm-misi-head{position:relative;z-index:2;text-align:center;margin-bottom:28px}
+    .vm-misi-head-tag{font-family:var(--font-j);font-weight:700;font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:rgba(218,166,40,.7);display:flex;align-items:center;justify-content:center;gap:14px}
+    .vm-misi-head-tag::before,.vm-misi-head-tag::after{content:'';flex:1;max-width:52px;height:1px;background:rgba(218,166,40,.25)}
+    .vm-misi-grid{position:relative;z-index:2;display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .vm-misi-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:26px 28px;display:flex;gap:18px;align-items:flex-start;transition:background .3s,border-color .3s}
+    .vm-misi-item:hover{background:rgba(255,255,255,.08);border-color:rgba(218,166,40,.35)}
+    .vm-misi-num{font-family:var(--font-j);font-weight:900;font-size:1.8rem;color:rgba(218,166,40,.22);line-height:1;flex-shrink:0;padding-top:1px}
+    .vm-misi-text{font-size:.9rem;color:rgba(255,255,255,.78);line-height:1.75}
+
+    /* ── NILAI ── */
+    #nilai{background:var(--putih)}
+    .nilai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+    .nilai-card{padding:34px 24px;background:var(--putih);border:1px solid #e8ede9;border-radius:4px;text-align:center;position:relative;overflow:hidden;transition:all .35s}
+    .nilai-card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--hijau-mid),var(--emas));transform:scaleX(0);transform-origin:left;transition:transform .4s}
+    .nilai-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(15,38,31,.12);border-color:transparent}
+    .nilai-card:hover::before{transform:scaleX(1)}
+    .nilai-card:hover .ni-icon{background:var(--hijau-tua);border-color:var(--hijau-tua)}
+    .nilai-card:hover .ni-icon svg{stroke:var(--emas)}
+    .nilai-num{font-family:var(--font-j);font-weight:900;font-size:3rem;color:rgba(15,38,31,.05);position:absolute;top:10px;right:14px;line-height:1}
+    .ni-icon{width:50px;height:50px;background:rgba(15,38,31,.05);border:1px solid rgba(15,38,31,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;transition:all .3s}
+    .ni-icon svg{width:21px;height:21px;stroke:var(--hijau-tua);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:stroke .3s}
+    .nilai-title{font-family:var(--font-j);font-weight:800;font-size:1rem;color:var(--hijau-tua);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em}
+    .nilai-desc{font-size:.84rem;color:#6a7a70;line-height:1.7}
+
+    /* ── TIMELINE ── */
+    #milestone{background:var(--hijau-tua)}
+    .milestone-bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(47,108,63,.2) 0%,transparent 70%)}
+    .timeline{position:relative;z-index:2;max-width:860px;margin:0 auto}
+    .timeline::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,transparent,var(--emas) 10%,var(--emas) 90%,transparent);transform:translateX(-50%)}
+    .tl-item{display:grid;grid-template-columns:1fr 60px 1fr;gap:0;margin-bottom:46px;align-items:start}
+    .tl-item:last-child{margin-bottom:0}
+    .tl-left{text-align:right;padding-right:30px}
+    .tl-right{text-align:left;padding-left:30px}
+    .tl-ctr{display:flex;justify-content:center;align-items:flex-start;padding-top:4px}
+    .tl-dot{width:17px;height:17px;border-radius:50%;background:var(--emas);border:3px solid var(--hijau-tua);box-shadow:0 0 0 3px var(--emas);flex-shrink:0;animation:pulse 2.5s ease-in-out infinite}
+    .tl-date{font-family:var(--font-j);font-weight:800;font-size:.71rem;color:var(--emas);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+    .tl-ev{font-family:var(--font-j);font-weight:700;font-size:.94rem;color:var(--putih);margin-bottom:6px}
+    .tl-desc{font-size:.82rem;color:rgba(255,255,255,.62);line-height:1.7}
+
+    /* ── PRODUK ── */
+    #produk{background:var(--abu)}
+    .prod-cats{display:flex;border:1px solid #d0dbd2;border-radius:4px;overflow:hidden;margin-bottom:36px}
+    .prod-cat{flex:1;padding:12px 8px;text-align:center;font-family:var(--font-j);font-weight:900;font-size:.63rem;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;border:none;background:transparent;color:#6a7a70;transition:all .3s;border-right:1px solid #d0dbd2}
+    .prod-cat:last-child{border-right:none}
+    .prod-cat.active{background:var(--hijau-tua);color:var(--emas)}
+    .prod-panel{display:none}.prod-panel.active{display:block}
+    .prod-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .prod-card{background:var(--putih);border-radius:4px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.07);transition:all .35s}
+    .prod-card:hover{transform:translateY(-5px);box-shadow:0 18px 44px rgba(15,38,31,.14)}
+    .prod-img{height:172px;background:var(--hijau-tua);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+    .prod-img img{width:100%;height:100%;object-fit:contain;padding:16px;transition:transform .4s}
+    .prod-card:hover .prod-img img{transform:scale(1.06)}
+    .prod-tag{position:absolute;top:10px;left:10px;background:var(--emas);color:var(--hijau-tua);font-family:var(--font-j);font-size:.61rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+    .prod-body{padding:20px}
+    .prod-title{font-family:var(--font-j);font-weight:800;font-size:.96rem;color:var(--hijau-tua);margin-bottom:6px}
+    .prod-sni{font-size:.7rem;color:var(--emas);font-weight:700;margin-bottom:10px;display:block}
+    .prod-desc{font-size:.81rem;color:#5a6a60;line-height:1.65;margin-bottom:10px}
+    .prod-specs{background:var(--abu);border-radius:3px;padding:11px 13px;margin-top:8px}
+    .prod-specs-title{font-family:var(--font-j);font-weight:800;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--hijau-tua);margin-bottom:7px}
+    .prod-specs ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+    .prod-specs ul li{font-size:.73rem;color:#4a5a50;padding-left:13px;position:relative;line-height:1.5}
+    .prod-specs ul li::before{content:'•';position:absolute;left:0;color:var(--emas);font-weight:700}
+    .prod-keung{margin-top:8px}
+    .prod-keung-title{font-family:var(--font-j);font-weight:800;font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--hijau-mid);margin-bottom:5px}
+    .prod-keung ul{list-style:none;display:flex;flex-direction:column;gap:4px}
+    .prod-keung ul li{font-size:.73rem;color:#4a5a50;padding-left:13px;position:relative;line-height:1.5}
+    .prod-keung ul li::before{content:'→';position:absolute;left:0;color:var(--emas);font-size:.68rem}
+    .prod-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;max-width:760px;margin:0 auto}
+    /* Pabrik */
+    .pabrik-box{background:var(--hijau-tua);border-radius:4px;padding:24px 26px;height:100%}
+    .pabrik-box-title{font-family:var(--font-j);font-weight:900;font-size:.76rem;color:var(--emas);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .pabrik-box-title svg{width:15px;height:15px;stroke:var(--emas);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+    .pabrik-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .pabrik-item{background:rgba(255,255,255,.06);border:1px solid rgba(218,166,40,.15);border-radius:3px;padding:14px 16px;display:flex;align-items:center;gap:10px;transition:all .3s}
+    .pabrik-item:hover{background:rgba(218,166,40,.1);border-color:rgba(218,166,40,.4)}
+    .pabrik-item svg{width:16px;height:16px;stroke:rgba(218,166,40,.65);fill:none;stroke-width:1.5;stroke-linecap:round;flex-shrink:0;transition:stroke .3s}
+    .pabrik-item:hover svg{stroke:var(--emas)}
+    .pabrik-item span{font-family:var(--font-j);font-weight:700;font-size:.82rem;color:rgba(255,255,255,.85)}
+
+    /* ── MANAJEMEN ── */
+    #manajemen{background:var(--hijau-tua)}
+    .manajemen-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(218,166,40,.07) 0%,transparent 60%)}
+    .manajemen-sec-label{margin-bottom:28px;text-align:center;position:relative;z-index:2}
+    .manajemen-sec-label h4{font-family:var(--font-j);font-weight:800;font-size:1rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.15em}
+    .manajemen-row{display:flex;justify-content:center;gap:44px;flex-wrap:wrap;position:relative;z-index:2;margin-bottom:60px}
+    .mgmt-card{text-align:center;width:240px}
+    .mgmt-avatar{width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.07);border:2px solid rgba(218,166,40,.35);margin:0 auto 16px;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:all .3s}
+    .mgmt-avatar img{width:100%;height:100%;object-fit:cover;object-position:top}
+    .mgmt-avatar .avatar-svg{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+    .mgmt-avatar .avatar-svg svg{width:60px;height:60px;stroke:rgba(218,166,40,.38);fill:none;stroke-width:1.2;stroke-linecap:round}
+    .mgmt-card:hover .mgmt-avatar{border-color:var(--emas);box-shadow:0 0 22px rgba(218,166,40,.25)}
+    .mgmt-name{font-family:var(--font-j);font-weight:800;font-size:.88rem;color:var(--putih);margin-bottom:5px}
+    .mgmt-jabatan{font-size:.7rem;color:var(--emas);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+
+    /* ── PUBLIKASI ── */
+    #publikasi{background:var(--putih)}
+    .pub-tabs{display:flex;border:1px solid #e0e8e2;border-radius:3px;overflow:hidden;margin-bottom:36px}
+    .pub-tab{flex:1;padding:13px;text-align:center;font-family:var(--font-j);font-weight:800;font-size:.7rem;text-transform:uppercase;letter-spacing:.07em;cursor:pointer;border:none;background:transparent;color:#6a7a70;transition:all .3s;border-right:1px solid #e0e8e2}
+    .pub-tab:last-child{border-right:none}
+    .pub-tab.active{background:var(--hijau-tua);color:var(--emas)}
+    .pub-panel{display:none}.pub-panel.active{display:block}
+    .csr-desc-box{background:var(--abu);border-left:4px solid var(--emas);padding:28px 32px;border-radius:3px;font-size:.92rem;color:#4a5a50;line-height:1.85}
+    .demplot-wrap{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:start}
+    .demplot-img{border-radius:4px;overflow:hidden;height:310px}
+    .demplot-img img{width:100%;height:100%;object-fit:cover}
+    .demplot-stats{display:flex;gap:14px;margin-bottom:20px}
+    .demplot-stat{text-align:center;flex:1;padding:16px;background:var(--putih);border-radius:3px;border-top:3px solid var(--emas);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+    .demplot-stat-num{font-family:var(--font-j);font-weight:900;font-size:1.6rem;color:var(--hijau-tua)}
+    .demplot-stat-label{font-size:.7rem;color:#6a7a70;margin-top:3px}
+    .demplot-content{background:var(--abu);border-radius:4px;padding:24px}
+    .demplot-desc{font-size:.86rem;color:#4a5a50;line-height:1.8}
+    /* YouTube section */
+    .yt-video-container{max-width:720px;margin:0 auto}
+    .yt-iframe-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:6px 6px 0 0;box-shadow:0 -4px 30px rgba(0,0,0,.15)}
+    .yt-iframe-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+    .yt-thumb-link{display:block;position:absolute;inset:0;width:100%;height:100%;text-decoration:none;background:#000}
+    .yt-thumb-link img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+    .yt-thumb-link:hover img{transform:scale(1.04)}
+    .yt-play-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.9;transition:opacity .2s,transform .3s;filter:drop-shadow(0 4px 20px rgba(0,0,0,.7))}
+    .yt-thumb-link:hover .yt-play-btn{opacity:1;transform:translate(-50%,-50%) scale(1.1)}
+    .yt-video-info{background:var(--hijau-tua);border-radius:0 0 6px 6px;padding:13px 18px;display:flex;align-items:center;gap:13px;box-shadow:0 8px 30px rgba(0,0,0,.18)}
+    .yt-channel-icon{width:38px;height:38px;background:#FF0000;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .yt-channel-icon svg{width:21px;height:21px;fill:white}
+    .yt-channel-text{flex:1;display:flex;flex-direction:column;gap:2px}
+    .yt-channel-name{font-family:var(--font-j);font-weight:800;font-size:.9rem;color:white;line-height:1.2}
+    .yt-channel-handle{font-size:.72rem;color:rgba(255,255,255,.5);letter-spacing:.04em}
+    .yt-subscribe-btn{background:#FF0000;color:white;padding:7px 18px;border-radius:3px;font-weight:700;font-size:.75rem;text-decoration:none;letter-spacing:.06em;text-transform:uppercase;transition:background .2s,transform .15s;flex-shrink:0}
+    .yt-subscribe-btn:hover{background:#cc0000;transform:translateY(-1px)}
+    .yt-cap{margin-top:12px;font-size:.8rem;color:#8a9a90;text-align:center}
+    .yt-cap a{color:var(--hijau-tua);font-weight:700}
+
+    /* ── KONTAK ── */
+    #kontak{background:var(--hijau-tua)}
+    .kontak-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 0% 0%,rgba(218,166,40,.06) 0%,transparent 50%),radial-gradient(ellipse at 100% 100%,rgba(47,108,63,.3) 0%,transparent 60%)}
+    .kontak-sg{position:absolute;bottom:0;right:0;width:360px;opacity:.08;pointer-events:none}
+    .kontak-grid{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1.1fr;gap:52px}
+    .offices{margin-top:26px;display:flex;flex-direction:column;gap:18px}
+    .office-item{border-left:2px solid rgba(218,166,40,.35);padding-left:16px;transition:border-color .3s}
+    .office-item:hover{border-color:var(--emas)}
+    .office-name{font-family:var(--font-j);font-weight:800;font-size:.79rem;color:var(--emas);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+    .office-name svg{width:13px;height:13px;stroke:var(--emas);fill:none;stroke-width:1.5;stroke-linecap:round;flex-shrink:0}
+    .office-detail{font-size:.78rem;color:rgba(255,255,255,.62);line-height:1.85}
+    .office-detail strong{color:rgba(255,255,255,.88);font-weight:600}
+    .socials{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap}
+    .social-btn{display:flex;align-items:center;gap:8px;padding:9px 15px;border:1px solid rgba(255,255,255,.18);border-radius:3px;text-decoration:none;color:rgba(255,255,255,.78);font-size:.78rem;font-weight:600;transition:all .3s}
+    .social-btn:hover{border-color:var(--emas);color:var(--emas);background:rgba(218,166,40,.08)}
+    .kontak-map-wrap{border-radius:4px;overflow:hidden;height:460px}
+    .kontak-map-wrap iframe{width:100%;height:100%;border:none}
+
+    /* ── SERTIFIKASI ── */
+    #sertifikasi{background:var(--putih);border-top:1px solid #e8ede9}
+    .cert-inner{max-width:1200px;margin:auto;padding:44px 32px;text-align:center}
+    .cert-label{font-family:var(--font-j);font-weight:800;font-size:.67rem;letter-spacing:.18em;text-transform:uppercase;color:#9aaa9e;margin-bottom:28px;display:block}
+    .cert-logos{display:flex;align-items:center;justify-content:center;gap:52px;flex-wrap:wrap}
+    .cert-logo{display:flex;align-items:center;justify-content:center;transition:transform .3s}
+    .cert-logo:hover{transform:translateY(-5px)}
+    .cert-logo img{height:70px;object-fit:contain;filter:grayscale(20%);transition:filter .3s}
+    .cert-logo:hover img{filter:grayscale(0)}
+
+    /* ── FOOTER ── */
+    footer{background:#070f0b;padding:26px 32px}
+    .footer-inner{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
+    .footer-logo{display:flex;align-items:center;gap:11px}
+    .footer-logo img{height:32px;opacity:.7}
+    .footer-logo span{font-family:var(--font-j);font-weight:800;font-size:.78rem;color:rgba(255,255,255,.4)}
+    .footer-copy{font-size:.73rem;color:rgba(255,255,255,.3);text-align:center}
+    .footer-copy a{color:var(--emas);text-decoration:none}
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu{display:none;position:fixed;inset:0;background:rgba(10,26,19,.99);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+    .mobile-menu.open{display:flex}
+    .mobile-menu a{font-family:var(--font-j);font-weight:900;font-size:1.3rem;color:var(--putih);text-decoration:none;text-transform:uppercase;letter-spacing:.07em;transition:color .3s}
+    .mobile-menu a:hover{color:var(--emas)}
+    .mobile-close{position:absolute;top:22px;right:22px;background:none;border:none;cursor:pointer;padding:6px}
+    .mobile-close svg{width:28px;height:28px;stroke:rgba(255,255,255,.6);fill:none;stroke-width:1.5;stroke-linecap:round}
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:1024px){
+      .hero-content{grid-template-columns:1fr;text-align:center;padding:120px 32px 80px}
+      .hero-visual{justify-content:center;margin-top:16px}
+      .hero-cta{justify-content:center}
+      .about-grid{grid-template-columns:1fr}
+      .about-img-frame{height:300px}
+      .about-iso-badge{display:none}
+      .vm-misi-grid{grid-template-columns:1fr}
+      .nilai-grid{grid-template-columns:repeat(2,1fr)}
+      .prod-grid{grid-template-columns:repeat(2,1fr)}
+      .kontak-grid{grid-template-columns:1fr}
+      .kontak-map-wrap{height:360px}
+      .nav-links{display:none}
+      .hamburger{display:flex}
+      .hut-strip-num{display:none}
+      .nav-inner{padding:14px 20px}
+    }
+    @media(max-width:768px){
+      .section-pad{padding:68px 0}
+      .container{padding:0 20px}
+      .hero-content{padding:100px 20px 72px}
+      .demplot-wrap{grid-template-columns:1fr}
+      .prod-grid-2{grid-template-columns:1fr}
+      .yt-wrap{border-radius:4px}
+      .about-year-badge{display:none}
+      .about-img-frame{height:260px}
+      .vm-visi{padding:32px 24px}
+      .kontak-map-wrap{height:300px}
+    }
+    @media(max-width:600px){
+      .section-pad{padding:52px 0}
+      .container{padding:0 16px}
+      .nav-inner{padding:10px 16px}
+      .hero-content{padding:90px 16px 60px}
+      .about-img-frame{height:220px}
+      .about-pillars{grid-template-columns:1fr}
+      .vm-visi{padding:22px 16px}
+      .nilai-grid{grid-template-columns:1fr}
+      .prod-grid{grid-template-columns:1fr}
+      .prod-cats{flex-direction:column}
+      .prod-cat{border-right:none;border-bottom:1px solid #d0dbd2}
+      .prod-cat:last-child{border-bottom:none}
+      .pub-tabs{flex-direction:column}
+      .pub-tab{border-right:none;border-bottom:1px solid #e0e8e2}
+      .pub-tab:last-child{border-bottom:none}
+      .tl-item{grid-template-columns:1fr}
+      .tl-ctr{display:none}
+      .tl-left,.tl-right{text-align:left;padding:0 0 0 22px;position:relative}
+      .tl-left::before,.tl-right::before{content:'';position:absolute;left:0;top:7px;width:10px;height:10px;border-radius:50%;background:var(--emas)}
+      .timeline::before{left:5px}
+      .cert-logos{gap:28px}
+      .hut-strip{gap:14px;padding:14px 16px}
+      .hut-strip-logo img{height:54px}
+      .hut-strip-div{display:none}
+      .hut-strip-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .manajemen-row{gap:18px}
+      .mgmt-card{width:calc(50% - 9px)}
+      .mgmt-avatar{width:120px;height:120px}
+      .hero-logo-wrap{width:230px;height:230px}
+      .hero-logo-img{width:144px}
+      .hero-supergrafis{width:360px}
+      .pabrik-grid{grid-template-columns:1fr}
+      .scroll-indicator{left:0;right:0;transform:none}
+      .kontak-map-wrap{height:240px}
+      .demplot-stats{flex-direction:column}
+      footer{padding:18px 16px}
+      .footer-inner{flex-direction:column;text-align:center}
+      .cert-logo img{height:56px}
+      .cert-logos{gap:20px}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <img src="logo-gcs.png" alt="GCS" />
+      <span>PT Gresik Cipta Sejahtera</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#tentang">Tentang</a></li>
+      <li><a href="#produk">Produk</a></li>
+      <li><a href="#manajemen">Manajemen</a></li>
+      <li><a href="#publikasi">Publikasi</a></li>
+      <li><a href="#kontak">Kontak</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMenu()" aria-label="Tutup">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="#tentang"   onclick="toggleMenu()">Tentang</a>
+  <a href="#produk"    onclick="toggleMenu()">Produk</a>
+  <a href="#manajemen" onclick="toggleMenu()">Manajemen</a>
+  <a href="#publikasi" onclick="toggleMenu()">Publikasi</a>
+  <a href="#kontak"    onclick="toggleMenu()">Kontak</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-bg-decor"></div>
+  <svg class="hero-supergrafis" viewBox="0 0 600 400" fill="none">
+    <path d="M0 380 C80 320,180 280,260 200 C340 120,420 60,600 0 L600 400 Z" fill="#2F6C3F" opacity=".5"/>
+    <path d="M60 400 C140 340,240 300,320 220 C400 140,480 80,600 40 L600 400 Z" fill="#DAA628" opacity=".7"/>
+  </svg>
+  <div class="hero-content container">
+    <div class="hero-text">
+      <div class="hero-tag">Berdiri Sejak 1972 — Petrokimia Gresik Group</div>
+      <h1 class="hero-title">PT Gresik<br><span class="emas">Cipta Sejahtera</span></h1>
+      <p class="hero-subtitle">Perusahaan perdagangan, logistik, dan produsen pupuk yang unggul dalam mutu, waktu, biaya dan layanan.</p>
+      <div class="hero-cta">
+        <a href="#tentang" class="btn-primary">Selengkapnya</a>
+        <a href="#produk"  class="btn-outline">Produk &amp; Jasa</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-logo-wrap">
+        <div class="hero-ring"></div>
+        <div class="hero-ring2"></div>
+        <img src="logo-gcs.png" alt="GCS Logo" class="hero-logo-img" />
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- HUT BANNER (below hero) -->
+<section id="hut-banner">
+  <div class="hut-strip">
+    <div class="hut-strip-logo">
+      <img src="logo-hut.png" alt="HUT GCS ke-54" />
+    </div>
+    <div class="hut-strip-div"></div>
+    <div class="hut-strip-body">
+      <div class="hut-strip-tag">
+        <span class="live-dot"></span>
+        Sedang Berlangsung
+      </div>
+      <div class="hut-strip-title">Hari Ulang Tahun PT Gresik Cipta Sejahtera ke-<strong>54</strong></div>
+      <div class="hut-strip-sub">15 Juni 1972 &mdash; 15 Juni 2026 &nbsp;&middot;&nbsp; 2026 Melesat Lebih Jauh</div>
+    </div>
+    <div class="hut-strip-num">54</div>
+  </div>
+</section>
+
+<!-- TENTANG -->
+<section id="tentang" class="section-pad">
+  <svg style="position:absolute;top:-80px;right:-100px;width:460px;opacity:.05;pointer-events:none" viewBox="0 0 500 400" fill="none">
+    <path d="M0 0 C100 60,220 40,320 120 C420 200,460 300,500 400 L0 400 Z" fill="#0F261F"/>
+  </svg>
+  <div class="container">
+    <div class="about-grid">
+      <div class="reveal-left" style="position:relative">
+        <div class="about-img-frame">
+          <div class="about-photo-grid">
+            <div class="about-photo-cell"><img src="asset1.jpg" alt="GCS 1" /></div>
+            <div class="about-photo-cell"><img src="asset2.jpg" alt="GCS 2" /></div>
+            <div class="about-photo-cell"><img src="asset3.jpg" alt="GCS 3" /></div>
+            <div class="about-photo-cell"><img src="asset4.jpg" alt="GCS 4" /></div>
+          </div>
+        </div>
+        <div class="about-year-badge reveal-scale">
+          <span class="year">54</span><span class="year-label">Tahun</span>
+        </div>
+        <div class="about-iso-badge reveal-scale">
+          <div class="iso-t">ISO 9001:2015</div><div class="iso-s">Bureau Veritas</div>
+        </div>
+      </div>
+      <div class="reveal-right">
+        <span class="section-label">Sejarah Perusahaan</span>
+        <h2 class="section-title">Lima Dekade <span>Keunggulan & Inovasi</span></h2>
+        <div class="section-line"></div>
+        <p style="color:#4a5a50;line-height:1.85;margin-bottom:18px justify">
+          PT Gresik Cipta Sejahtera didirikan pada tanggal <strong>15 Juni 1972</strong>, merupakan salah satu perusahaan di lingkungan <strong>Petrokimia Gresik Group</strong>, yang sahamnya dimiliki oleh Yayasan Petrokimia Gresik (YPG) dan Koperasi Karyawan Keluarga Besar Petrokimia Gresik (K3PG).
+        </p>
+        <p style="color:#4a5a50;line-height:1.85;margin-bottom:28px justify">
+          Berkomitmen memberikan pelayanan dengan kualitas prima, dibuktikan dengan meningkatnya penjualan dari tahun ke tahun serta diperolehnya sertifikat <strong>ISO 9001:2015</strong> dari Bureau Veritas Indonesia. Barang-barang diproduksi dengan standar SNI dan sistem manajemen mutu ISO 9001 dan ISO 14001.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VISI MISI -->
+<section id="visimisi" class="section-pad">
+  <div class="vm-bg"></div>
+  <svg class="vm-sg" viewBox="0 0 400 500" fill="none">
+    <path d="M400 0 C300 80,200 140,140 260 C80 380,60 440,0 500 L0 0 Z" fill="#DAA628"/>
+    <path d="M400 60 C300 130,200 190,150 300 C100 410,70 460,0 500 L0 60 Z" fill="#2F6C3F"/>
+  </svg>
+  <div class="container" style="position:relative;z-index:2">
+    <div style="text-align:center;margin-bottom:50px" class="reveal">
+      <span class="section-label">Arah &amp; Tujuan</span>
+      <h2 class="section-title light">Visi &amp; <span>Misi</span></h2>
+      <div class="section-line center"></div>
+    </div>
+    <!-- VISI -->
+    <div class="vm-visi reveal">
+      <div class="vm-visi-tag">Visi</div>
+      <p class="vm-visi-text">Menjadi perusahaan perdagangan, logistik dan produsen pupuk yang <strong>unggul dalam mutu, waktu, biaya dan layanan</strong>.</p>
+    </div>
+    <!-- MISI -->
+    <div class="vm-misi-head reveal">
+      <div class="vm-misi-head-tag">Misi</div>
+    </div>
+    <div class="vm-misi-grid">
+      <div class="vm-misi-item reveal-left">
+        <div class="vm-misi-num">01</div>
+        <p class="vm-misi-text">Meningkatkan kapabilitas karyawan, proses dan sistem</p>
+      </div>
+      <div class="vm-misi-item reveal-right">
+        <div class="vm-misi-num">02</div>
+        <p class="vm-misi-text">Menyediakan barang dan jasa yang berkualitas dan bersaing</p>
+      </div>
+      <div class="vm-misi-item reveal-left" style="transition-delay:.1s">
+        <div class="vm-misi-num">03</div>
+        <p class="vm-misi-text">Memberikan layanan terbaik dan menjaga komitmen kepada pelanggan</p>
+      </div>
+      <div class="vm-misi-item reveal-right" style="transition-delay:.1s">
+        <div class="vm-misi-num">04</div>
+        <p class="vm-misi-text">Memberikan manfaat kepada pelanggan, pemegang saham, manajemen, karyawan, pemerintah dan lingkungan serta ekosistem Petrokimia Gresik Group</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NILAI -->
+<section id="nilai" class="section-pad">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:50px" class="reveal">
+      <span class="section-label">Budaya Kerja</span>
+      <h2 class="section-title">Nilai <span>Perusahaan</span></h2>
+      <div class="section-line center"></div>
+      <p class="section-intro center">Enam nilai inti yang menjiwai setiap insan GCS dalam mengemban visi dan misi perusahaan.</p>
+    </div>
+    <div class="nilai-grid">
+      <div class="nilai-card reveal">
+        <span class="nilai-num">01</span>
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M11 17 9 15a5 5 0 0 1 0-7l4-4a5 5 0 0 1 7 7l-1.5 1.5"/><path d="m13 7 2 2a5 5 0 0 1 0 7l-4 4a5 5 0 0 1-7-7L5.5 11.5"/></svg></div>
+        <div class="nilai-title">Komitmen</div>
+        <p class="nilai-desc">Konsisten dalam menjalankan tugas dan tanggung jawab demi tercapainya tujuan perusahaan.</p>
+      </div>
+      <div class="nilai-card reveal" style="transition-delay:.1s">
+        <span class="nilai-num">02</span>
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+        <div class="nilai-title">Integritas</div>
+        <p class="nilai-desc">Jujur, terbuka, dan bertindak sesuai etika profesional dalam setiap aspek pekerjaan.</p>
+      </div>
+      <div class="nilai-card reveal" style="transition-delay:.2s">
+        <span class="nilai-num">03</span>
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="nilai-title">Team Work</div>
+        <p class="nilai-desc">Bekerja sama dengan penuh kepercayaan untuk mencapai hasil yang lebih besar bersama.</p>
+      </div>
+      <div class="nilai-card reveal" style="transition-delay:.3s">
+        <span class="nilai-num">04</span>
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+        <div class="nilai-title">Sinergis</div>
+        <p class="nilai-desc">Mengoptimalkan kolaborasi antar unit dan ekosistem Petrokimia Gresik Group.</p>
+      </div>
+      <div class="nilai-card reveal" style="transition-delay:.4s">
+        <span class="nilai-num">05</span>
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.22-1.21 4.16-3 5.2V18H9v-3.8C7.21 13.16 6 11.22 6 9a6 6 0 0 1 6-6z"/></svg></div>
+        <div class="nilai-title">Antusias</div>
+        <p class="nilai-desc">Semangat tinggi dalam berinovasi dan memberikan kontribusi terbaik bagi perusahaan.</p>
+      </div>
+      <div class="nilai-card reveal" style="transition-delay:.5s">
+        <span class="nilai-num">06</span>
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg></div>
+        <div class="nilai-title">Peduli</div>
+        <p class="nilai-desc">Peka terhadap lingkungan, masyarakat, dan sesama dalam bingkai tanggung jawab sosial.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MILESTONE -->
+<section id="milestone" class="section-pad">
+  <div class="milestone-bg"></div>
+  <div class="container">
+    <div style="text-align:center;margin-bottom:62px;position:relative;z-index:2" class="reveal">
+      <span class="section-label">Perjalanan Kami</span>
+      <h2 class="section-title light">Perjalanan &amp; <span>Pencapaian</span></h2>
+      <div class="section-line center"></div>
+    </div>
+    <div class="timeline">
+      <div class="tl-item reveal">
+        <div class="tl-left"><div class="tl-date">03 April 1972</div><div class="tl-ev">Pendirian Perusahaan</div><div class="tl-desc">Pendirian PT Petrokimia Trading Co. (PT Petrad) sesuai Akte Pendirian No. 2 oleh Notaris Sugijanto, SH.</div></div>
+        <div class="tl-ctr"><div class="tl-dot"></div></div>
+        <div></div>
+      </div>
+      <div class="tl-item reveal">
+        <div></div>
+        <div class="tl-ctr"><div class="tl-dot"></div></div>
+        <div class="tl-right"><div class="tl-date">15 Juni 1972</div><div class="tl-ev">Perubahan Nama — Hari Jadi</div><div class="tl-desc">Berganti nama menjadi PT Gresik Chemical and Supplies (PT GCS). Tanggal ini ditetapkan sebagai hari jadi perusahaan.</div></div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-left"><div class="tl-date">01 Januari 1996</div><div class="tl-ev">PT Gresik Cipta Sejahtera</div><div class="tl-desc">Berganti nama menjadi PT Gresik Cipta Sejahtera, tetap menggunakan singkatan dan logo PT GCS.</div></div>
+        <div class="tl-ctr"><div class="tl-dot"></div></div>
+        <div></div>
+      </div>
+      <div class="tl-item reveal">
+        <div></div>
+        <div class="tl-ctr"><div class="tl-dot"></div></div>
+        <div class="tl-right"><div class="tl-date">24 Oktober 2018</div><div class="tl-ev">Kantor Pusat Baru</div><div class="tl-desc">GCS menempati kantor pusat baru di Kawasan Industri Gresik (KIG) Jl. KIG Raya Selatan Blok A5 hingga saat ini.</div></div>
+      </div>
+      <div class="tl-item reveal">
+        <div class="tl-left"><div class="tl-date">2024 — Kini</div><div class="tl-ev">Sertifikasi ISO 9001:2015</div><div class="tl-desc">Memperoleh dan mempertahankan sertifikat ISO 9001:2015 dari Bureau Veritas Indonesia serta memenuhi SNI dan ISO 14001.</div></div>
+        <div class="tl-ctr"><div class="tl-dot"></div></div>
+        <div></div>
+      </div>
+      <div class="tl-item reveal">
+        <div></div>
+        <div class="tl-ctr"><div class="tl-dot" style="background:var(--emas-terang);animation:pulse 1.2s ease-in-out infinite"></div></div>
+        <div class="tl-right"><div class="tl-date">15 Juni 2026</div><div class="tl-ev" style="color:var(--emas)">HUT ke-54</div><div class="tl-desc">Merayakan 54 tahun pengabdian dengan semangat <em>"2026 Melesat Lebih Jauh"</em> bersama seluruh insan GCS dan mitra strategis.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUK -->
+<section id="produk" class="section-pad">
+  <svg style="position:absolute;top:0;left:-80px;width:360px;opacity:.05;pointer-events:none;transform:rotate(180deg) scaleX(-1)" viewBox="0 0 400 500" fill="none">
+    <path d="M400 500 C300 420,200 360,140 240 C80 120,60 60,0 0 L0 500 Z" fill="#0F261F"/>
+  </svg>
+  <div class="container" style="position:relative;z-index:2">
+    <div style="margin-bottom:38px" class="reveal">
+      <span class="section-label">Layanan Unggulan</span>
+      <h2 class="section-title">Produk <span>&amp; Jasa</span></h2>
+      <div class="section-line"></div>
+      <p class="section-intro">Diproduksi dengan standar mutu terjamin menggunakan sistem manajemen ISO 9001, ISO 14001, dan Standar Nasional Indonesia (SNI).</p>
+    </div>
+    <div class="prod-cats reveal">
+      <button class="prod-cat active" onclick="switchProd(this,'pupuk')">Pupuk</button>
+      <button class="prod-cat" onclick="switchProd(this,'kimia')">Bahan Kimia</button>
+      <button class="prod-cat" onclick="switchProd(this,'pestisida')">Pestisida</button>
+      <button class="prod-cat" onclick="switchProd(this,'organik')">Pupuk Organik</button>
+      <button class="prod-cat" onclick="switchProd(this,'jasa')">Jasa</button>
+    </div>
+
+    <!-- PUPUK -->
+    <div class="prod-panel active" id="pp-pupuk">
+      <div class="prod-grid">
+        <div class="prod-card reveal-scale">
+          <div class="prod-img" style="background:#0F261F"><img src="urea.png" alt="Urea"/><span class="prod-tag">Pupuk</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Urea</div><span class="prod-sni">SNI 02-2801-1998</span>
+            <div class="prod-specs"><div class="prod-specs-title">Spesifikasi</div><ul>
+              <li>Kadar air maksimal 0,50%</li><li>Kadar Biuret maksimal 1%</li>
+              <li>Kadar Nitrogen minimal 46%</li><li>Bentuk butiran tidak berdebu</li>
+              <li>Warna putih (non subsidi) / pink (bersubsidi)</li><li>Kemasan kantong isi 50 kg</li>
+            </ul></div>
+            <div class="prod-keung"><div class="prod-keung-title">Sifat &amp; Manfaat</div><ul><li>Higroskopis</li><li>Mudah larut dalam air</li></ul></div>
+          </div>
+        </div>
+        <div class="prod-card reveal-scale" style="transition-delay:.1s">
+          <div class="prod-img" style="background:#1a3a2e"><img src="sp36.png" alt="SP-36"/><span class="prod-tag">Pupuk</span></div>
+          <div class="prod-body">
+            <div class="prod-title">SP-36</div><span class="prod-sni">SNI 02-3769-2005</span>
+            <div class="prod-specs"><div class="prod-specs-title">Spesifikasi</div><ul>
+              <li>P&#8322;O&#8325; total minimal 36%</li><li>P&#8322;O&#8325; larut Asam Sitrat minimal 34%</li>
+              <li>P&#8322;O&#8325; larut dalam air minimal 30%</li><li>Kadar air maksimal 5%</li>
+              <li>Bentuk butiran, warna abu-abu</li><li>Kemasan kantong Kerbau Emas 50 kg</li>
+            </ul></div>
+            <div class="prod-keung"><div class="prod-keung-title">Keunggulan</div><ul>
+              <li>Tidak higroskopis, mudah larut dalam air</li><li>Sumber unsur hara Fosfor bagi tanaman</li>
+              <li>Memacu pertumbuhan akar dan perakaran</li><li>Mempercepat panen &amp; pembentukan buah/biji</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="prod-card reveal-scale" style="transition-delay:.2s">
+          <div class="prod-img" style="background:#0d2018"><img src="za.png" alt="ZA"/><span class="prod-tag">Pupuk</span></div>
+          <div class="prod-body">
+            <div class="prod-title">ZA</div><span class="prod-sni">Standar Nasional</span>
+            <div class="prod-specs"><div class="prod-specs-title">Spesifikasi</div><ul>
+              <li>Nitrogen minimal 20,8%</li><li>Belerang minimal 23,8%</li>
+              <li>Kadar air maksimal 1%</li><li>Bentuk kristal, warna putih / orange (bersubsidi)</li>
+              <li>Kemasan kantong Kerbau Emas 50 kg</li>
+            </ul></div>
+            <div class="prod-keung"><div class="prod-keung-title">Manfaat</div><ul>
+              <li>Meningkatkan produksi tebu &amp; hablur gula</li>
+              <li>Memperbaiki warna, aroma, rasa &amp; besar umbi hasil panen</li>
+            </ul></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BAHAN KIMIA -->
+    <div class="prod-panel" id="pp-kimia">
+      <div class="prod-grid">
+        <div class="prod-card reveal-scale">
+          <div class="prod-img" style="background:#0F261F"><img src="asam-chlorida.jpeg" alt="HCl" style="object-fit:cover;padding:0"/><span class="prod-tag">Kimia</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Asam Chlorida (HCl)</div><span class="prod-sni">SNI 06-2557-1992</span>
+            <div class="prod-specs"><div class="prod-specs-title">Spesifikasi</div><ul>
+              <li>Grade A: kadar min 32%, cair, tidak berwarna</li><li>Grade B: kadar min 31%, agak kekuningan</li>
+              <li>Sisa pemijaran maks 0,1%</li><li>Logam berat sebagai Pb maks 0,0005%</li>
+            </ul></div>
+            <div class="prod-keung"><div class="prod-keung-title">Kegunaan</div><ul><li>Industri makanan (lysine)</li><li>Industri kimia</li><li>Bahan pembersih</li></ul></div>
+          </div>
+        </div>
+        <div class="prod-card reveal-scale" style="transition-delay:.1s">
+          <div class="prod-img" style="background:#1a3a2e"><img src="amonia.jpg" alt="Amoniak" style="object-fit:cover;padding:0"/><span class="prod-tag">Kimia</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Amoniak</div><span class="prod-sni">SNI 06-0045-1987</span>
+            <div class="prod-specs"><div class="prod-specs-title">Spesifikasi</div><ul>
+              <li>Kadar Amoniak minimal 99,5%</li><li>Impuritis H&#8322;O maksimal 0,5%</li>
+              <li>Minyak maksimal 10 ppm</li><li>Bentuk cair</li>
+            </ul></div>
+            <div class="prod-keung"><div class="prod-keung-title">Kegunaan</div><ul>
+              <li>Industri pupuk (Urea, ZA, DAP, MAP, Phonska)</li>
+              <li>Media pendingin (pabrik es, cold storage)</li><li>Industri makanan (MSG, Lysine)</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="prod-card reveal-scale" style="transition-delay:.2s">
+          <div class="prod-img" style="background:#0d2018"><img src="asam-sulfat.jpg" alt="Asam Sulfat" style="object-fit:cover;padding:0"/><span class="prod-tag">Kimia</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Asam Sulfat</div><span class="prod-sni">SNI 06-0030-1996</span>
+            <div class="prod-specs"><div class="prod-specs-title">Spesifikasi</div><ul>
+              <li>Kadar H&#8322;SO&#8324; minimal 98%, bentuk cair</li>
+              <li>Chlorida (Cl) maks 10 ppm</li><li>Besi (Fe) maks 50 ppm</li>
+            </ul></div>
+            <div class="prod-keung"><div class="prod-keung-title">Kegunaan</div><ul>
+              <li>Industri pupuk (ZA, SP 36, SP 18)</li><li>Industri makanan (MSG, Lysine)</li>
+              <li>Industri Tekstil &amp; pertambangan</li>
+            </ul></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PESTISIDA -->
+    <div class="prod-panel" id="pp-pestisida">
+      <div class="prod-grid">
+        <div class="prod-card reveal-scale">
+          <div class="prod-img" style="background:#0F261F"><img src="SIDAMETHRIN.png" alt="Sidamethrin 50 EC"/><span class="prod-tag">Pestisida</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Sidamethrin 50 EC</div><span class="prod-sni">No. RI. 01010120011636</span>
+            <p class="prod-desc">Insektisida racun kontak dan lambung berbentuk pekatan (EC) berwarna kuning. Golongan 3A Piretroid (IRAC). Untuk jagung, kakao, kapas, kedelai, kubis, sawi, teh, dan tembakau.</p>
+            <div class="prod-keung"><div class="prod-keung-title">Keunggulan</div><ul>
+              <li>Berbentuk pekatan yang dapat diemulsikan</li><li>Bekerja pada sistem saraf serangga</li><li>Efektif untuk hama penting berbagai tanaman</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="prod-card reveal-scale" style="transition-delay:.1s">
+          <div class="prod-img" style="background:#1a3a2e"><img src="sidamec.png" alt="Sidamec 20 EC"/><span class="prod-tag">Pestisida</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Sidamec 20 EC</div><span class="prod-sni">No. RI. 01010120042317</span>
+            <p class="prod-desc">Insektisida racun kontak dan lambung untuk mengendalikan hama kutu-kutuan pada tanaman cabai dan padi. Golongan 6 Avermectin (IRAC).</p>
+            <div class="prod-keung"><div class="prod-keung-title">Keunggulan</div><ul>
+              <li>Daya basmi cepat dan efektif</li><li>Residu mudah diurai</li><li>Dosis pemakaian rendah</li>
+            </ul></div>
+          </div>
+        </div>
+        <div class="prod-card reveal-scale" style="transition-delay:.2s">
+          <div class="prod-img" style="background:#0d2018"><img src="sidafur.png" alt="Sidafur 3 GR"/><span class="prod-tag">Pestisida</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Sidafur 3 GR</div><span class="prod-sni">No. RI. 01010120042142</span>
+            <p class="prod-desc">Insektisida sistemik berbentuk butiran (GR) berwarna biru untuk mengendalikan hama uret pada tebu, cengkeh, kakao, kentang, dan padi. Golongan 1A Karbamat (IRAC).</p>
+            <div class="prod-keung"><div class="prod-keung-title">Keunggulan</div><ul>
+              <li>Sistemik berspektrum luas</li><li>Mudah terserap tanaman</li><li>Efektif untuk hama uret stadia larva tebu</li>
+            </ul></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUPUK ORGANIK -->
+    <div class="prod-panel" id="pp-organik">
+      <div style="max-width:500px;margin:0 auto">
+        <div class="prod-card reveal-scale">
+          <div class="prod-img" style="background:#1a3a2e;height:260px"><img src="pupuk.jpg" alt="Pupuk Organik" style="object-fit:cover;padding:0"/><span class="prod-tag">Organik</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Pupuk Organik</div>
+            <p class="prod-desc">PT GCS memproduksi <strong>Pupuk Organik Petroganik</strong>, Pupuk Organik Sejahtera, dan Pupuk Organik Super Sejahtera dari empat pabrik produksi di Malang, Lampung, Serang, dan Sumenep.</p>
+            <div class="prod-keung"><div class="prod-keung-title">Kegunaan</div><ul>
+              <li>Menggemburkan dan menyuburkan tanah</li><li>Meningkatkan daya simpan dan daya serap air</li>
+              <li>Memperkaya hara makro dan mikro</li><li>Sesuai untuk semua jenis tanah dan tanaman</li>
+            </ul></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JASA -->
+    <div class="prod-panel" id="pp-jasa">
+      <div class="prod-grid-2">
+        <div class="prod-card reveal-scale">
+          <div class="prod-img" style="background:#0F261F;height:210px"><img src="angkutan.jpg" alt="Jasa Angkutan" style="object-fit:cover;padding:0"/><span class="prod-tag">Jasa</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Jasa Angkutan</div>
+            <p class="prod-desc">Jasa angkutan barang dengan berbagai jenis dan kapasitas kendaraan, mendukung distribusi pupuk dan bahan kimia ke seluruh wilayah Indonesia dengan armada handal dan terpercaya.</p>
+          </div>
+        </div>
+        <div class="prod-card reveal-scale" style="transition-delay:.1s">
+          <div class="prod-img" style="background:#1a3a2e;height:210px"><img src="gudang.jpg" alt="Jasa Gudang" style="object-fit:cover;padding:0"/><span class="prod-tag">Jasa</span></div>
+          <div class="prod-body">
+            <div class="prod-title">Jasa Gudang</div>
+            <p class="prod-desc">Jasa pergudangan untuk menunjang kelancaran distribusi pupuk di berbagai wilayah dengan fasilitas memadai dan sistem manajemen stok yang terorganisir.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MANAJEMEN -->
+<section id="manajemen" class="section-pad">
+  <div class="manajemen-bg"></div>
+  <div class="container">
+    <div style="text-align:center;margin-bottom:50px;position:relative;z-index:2" class="reveal">
+      <span class="section-label">Pimpinan Perusahaan</span>
+      <h2 class="section-title light">Dewan <span>Manajemen</span></h2>
+      <div class="section-line center"></div>
+    </div>
+    <div class="manajemen-sec-label reveal"><h4>Dewan Komisaris</h4></div>
+    <div class="manajemen-row">
+      <div class="mgmt-card reveal-scale">
+        <div class="mgmt-avatar">
+          <img src="eko.jpg" alt="Eko Suroso" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="avatar-svg" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+        </div>
+        <div class="mgmt-name">Eko Suroso</div>
+        <div class="mgmt-jabatan">Komisaris Utama</div>
+      </div>
+      <div class="mgmt-card reveal-scale" style="transition-delay:.15s">
+        <div class="mgmt-avatar">
+          <img src="bambang.jpg" alt="Bambang Ariwibowo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="avatar-svg" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+        </div>
+        <div class="mgmt-name">Bambang Ariwibowo</div>
+        <div class="mgmt-jabatan">Komisaris</div>
+      </div>
+    </div>
+    <div class="manajemen-sec-label reveal"><h4>Dewan Direksi</h4></div>
+    <div class="manajemen-row">
+      <div class="mgmt-card reveal-scale">
+        <div class="mgmt-avatar" style="background:rgba(218,166,40,.1);border-color:rgba(218,166,40,.4)">
+          <div class="avatar-svg"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+        </div>
+        <div class="mgmt-name" style="opacity:.55;font-style:italic;font-size:.8rem">-</div>
+        <div class="mgmt-jabatan">Direktur Utama</div>
+      </div>
+      <div class="mgmt-card reveal-scale" style="transition-delay:.15s">
+        <div class="mgmt-avatar">
+          <img src="armi.jpg" alt="M. Armi Kurnia" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="avatar-svg" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+        </div>
+        <div class="mgmt-name">M. Armi Kurnia</div>
+        <div class="mgmt-jabatan">Direktur Komersil</div>
+      </div>
+      <div class="mgmt-card reveal-scale" style="transition-delay:.3s">
+        <div class="mgmt-avatar">
+          <img src="kosa.jpg" alt="Nugroho Iman Prakosa" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="avatar-svg" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
+        </div>
+        <div class="mgmt-name">Nugroho Iman Prakosa</div>
+        <div class="mgmt-jabatan">Direktur Keuangan</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PUBLIKASI -->
+<section id="publikasi" class="section-pad">
+  <div class="container">
+    <div style="margin-bottom:38px" class="reveal">
+      <span class="section-label">Berita &amp; Kegiatan</span>
+      <h2 class="section-title">Publikasi <span>&amp; CSR</span></h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="pub-tabs reveal">
+      <button class="pub-tab active" onclick="switchTab(this,'csr')">GCS Peduli</button>
+      <button class="pub-tab" onclick="switchTab(this,'demplot')">GCS Demplot</button>
+      <button class="pub-tab" onclick="switchTab(this,'video')">Video Profile</button>
+    </div>
+
+    <div class="pub-panel active" id="panel-csr">
+      <div class="csr-desc-box">
+        <strong style="display:block;font-family:var(--font-j);font-size:1.05rem;color:var(--hijau-tua);margin-bottom:12px">GCS Peduli</strong>
+        GCS Peduli merupakan program CSR PT GCS yang bertujuan untuk menguatkan kepedulian sosial, mempererat hubungan antara perusahaan dengan masyarakat sekitar utamanya, agar lebih harmonis &amp; saling menguntungkan. Program ini mencakup berbagai bidang sosial, pendidikan, keagamaan, dan lingkungan yang terus berkembang bersama komunitas di sekitar operasional perusahaan.
+      </div>
+    </div>
+
+    <div class="pub-panel" id="panel-demplot">
+      <div class="demplot-wrap">
+        <div class="demplot-img reveal-left">
+          <img src="demplot.jpeg" alt="Demplot Kentang" />
+        </div>
+        <div class="reveal-right">
+          <div class="demplot-stats">
+            <div class="demplot-stat"><div class="demplot-stat-num">125%</div><div class="demplot-stat-label">Peningkatan Produktivitas</div></div>
+            <div class="demplot-stat"><div class="demplot-stat-num">1 Ha</div><div class="demplot-stat-label">Lahan Percontohan</div></div>
+          </div>
+          <div class="demplot-content">
+            <p class="demplot-desc">Sebagai distributor pupuk subsidi, PT GCS berkewajiban melaksanakan <strong>Demonstration Plot (Demplot)</strong> — lahan percontohan agar petani dapat melihat dan membuktikan manfaat nyata pupuk GCS.<br><br>
+            <strong>Demplot Kentang — Desa Batur, Kec. Batur, Kab. Banjarnegara, Jawa Tengah (03 Juni 2020).</strong><br><br>
+            Pola pemupukan berimbang: NPK Phonska Plus 1.100 Kg &middot; ZA 200 Kg &middot; Petroganik 15 Ton &middot; ZK 30 Kg &middot; Petrogladiator &middot; Petro-Biofertil per 1 Ha. Hasilnya, produktivitas kentang meningkat hingga <strong>125%</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pub-panel" id="panel-video">
+      <div class="yt-video-container reveal">
+        <div class="yt-iframe-wrap">
+          <a class="yt-thumb-link" href="https://www.youtube.com/watch?v=WMieR5ltvL8" target="_blank" rel="noopener" aria-label="Tonton Video Profile PT GCS di YouTube">
+            <img src="https://img.youtube.com/vi/WMieR5ltvL8/maxresdefault.jpg" alt="Video Profile PT GCS" loading="lazy" />
+            <div class="yt-play-btn">
+              <svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#FF0000"/><path d="M45 24 27 14v20z" fill="#fff"/></svg>
+            </div>
+          </a>
+        </div>
+        <div class="yt-video-info">
+          <div class="yt-channel-icon">
+            <svg viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+          </div>
+          <div class="yt-channel-text">
+            <span class="yt-channel-name">GCS Gresik</span>
+            <span class="yt-channel-handle">@gcs.gresik</span>
+          </div>
+          <a href="https://www.youtube.com/@gcs.gresik" target="_blank" rel="noopener" class="yt-subscribe-btn">Subscribe</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAK -->
+<section id="kontak" class="section-pad">
+  <div class="kontak-bg"></div>
+  <svg class="kontak-sg" viewBox="0 0 420 400" fill="none">
+    <path d="M0 400 C80 320,180 260,260 160 C340 60,380 20,420 0 L420 400 Z" fill="#DAA628"/>
+    <path d="M60 400 C130 330,220 280,300 180 C370 100,400 50,420 20 L420 400 Z" fill="#2F6C3F"/>
+  </svg>
+  <div class="container">
+    <div class="kontak-grid">
+      <div class="reveal-left">
+        <span class="section-label">Hubungi Kami</span>
+        <h2 class="section-title light">Kontak <span>&amp; Lokasi</span></h2>
+        <div class="section-line"></div>
+        <div class="offices">
+          <div class="office-item">
+            <div class="office-name">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              Kantor Pusat — Gresik
+            </div>
+            <div class="office-detail">
+              <strong>Alamat:</strong> Jl. KIG Raya Selatan Blok A5, Kawasan Industri Gresik (KIG), Gresik, Jawa Timur 61121<br>
+              <strong>Telepon:</strong> 031 398 5543 / 031 398 4822 / 031 395 1894<br>
+              <strong>Faksimile:</strong> 031 398 1082 / 031 398 2641<br>
+              <strong>Email:</strong> kantorpusat@gcs-gresik.com
+            </div>
+          </div>
+          <div class="office-item">
+            <div class="office-name">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              Perwakilan — Medan
+            </div>
+            <div class="office-detail">
+              Perumahan PT Pusri No. 4, Jl. Sunggal, Kel. Sei Sikambing B, Medan 20119<br>
+              <strong>Telp:</strong> 061 414 9107 &nbsp;|&nbsp; <strong>Faks:</strong> 061 415 4333
+            </div>
+          </div>
+          <div class="office-item">
+            <div class="office-name">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              Perwakilan — Makassar
+            </div>
+            <div class="office-detail">
+              Jl. A.P. Pettarani, Ruko New Zamrud Blok A/19, Makassar<br>
+              <strong>Telp/Faks:</strong> 0411 466 2438
+            </div>
+          </div>
+          <div class="office-item">
+            <div class="office-name">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+              Perwakilan — Bandar Lampung
+            </div>
+            <div class="office-detail">
+              Jl. Hayam Wuruk, Ruko Kedamean Indah No. 6, Bandar Lampung<br>
+              <strong>Telp/Faks:</strong> 0721 266 990
+            </div>
+          </div>
+        </div>
+        <div class="socials">
+          <a href="https://www.instagram.com/gresikciptasejahtera_official/" target="_blank" rel="noopener" class="social-btn">
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            Instagram
+          </a>
+          <a href="https://www.youtube.com/@gcs.gresik" target="_blank" rel="noopener" class="social-btn">
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+            YouTube
+          </a>
+        </div>
+      </div>
+      <div class="reveal-right">
+        <div class="kontak-map-wrap">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3958.7013319874054!2d112.6326708!3d-7.160486199999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd80067114402c5%3A0x58f54664b2f63ece!2sKantor%20Pusat%20PT.%20Gresik%20Cipta%20Sejahtera%20(PT.%20GCS)!5e0!3m2!1sid!2sid!4v1781074620966!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERTIFIKASI -->
+<section id="sertifikasi">
+  <div class="cert-inner">
+    <span class="cert-label">Sertifikasi &amp; Keanggotaan Resmi</span>
+    <div class="cert-logos">
+      <div class="cert-logo reveal-scale"><img src="iso.jpg" alt="ISO 9001:2015" /></div>
+      <div class="cert-logo reveal-scale" style="transition-delay:.1s"><img src="sni.jpg" alt="SNI" /></div>
+      <div class="cert-logo reveal-scale" style="transition-delay:.2s"><img src="komite.jpg" alt="KNRCI" /></div>
+      <div class="cert-logo reveal-scale" style="transition-delay:.3s"><img src="k3.jpg" alt="K3" /></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <img src="logo-gcs.png" alt="GCS" />
+      <span>PT Gresik Cipta Sejahtera</span>
+    </div>
+    <div class="footer-copy">
+      &copy; 2026 PT Gresik Cipta Sejahtera. All rights reserved.<br>
+      <a href="mailto:kantorpusat@gcs-gresik.com">kantorpusat@gcs-gresik.com</a> &nbsp;|&nbsp; Copyright Tim IT GCS
+    </div>
+  </div>
+</footer>
+
+<script>
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+  }
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el => io.observe(el));
+
+  function switchProd(btn, id) {
+    document.querySelectorAll('.prod-cat').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.prod-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById('pp-' + id);
+    panel.classList.add('active');
+    panel.querySelectorAll('.reveal-scale,.reveal-left,.reveal-right').forEach(el => {
+      el.classList.remove('visible');
+      setTimeout(() => el.classList.add('visible'), 60);
+    });
+  }
+
+  function switchTab(btn, id) {
+    document.querySelectorAll('.pub-tab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.pub-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const panel = document.getElementById('panel-' + id);
+    panel.classList.add('active');
+    panel.querySelectorAll('.reveal,.reveal-left,.reveal-right,.reveal-scale').forEach(el => {
+      el.classList.remove('visible');
+      setTimeout(() => el.classList.add('visible'), 60);
+    });
+  }
+
+  const sections = document.querySelectorAll('section[id]');
+  const navAs = document.querySelectorAll('.nav-links a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.id; });
+    navAs.forEach(a => { a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--emas)' : ''; });
+  });
+</script>
+</body>
+</html>
