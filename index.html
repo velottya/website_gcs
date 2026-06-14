@@ -368,10 +368,17 @@
     .ppk-pin-icon{background:none!important;border:none!important}
     #ppk-popup{
       position:fixed;z-index:9999;background:var(--putih);
-      border-radius:8px;box-shadow:0 8px 36px rgba(0,0,0,.22);
-      padding:18px 16px 16px;width:220px;display:none;pointer-events:none;
+      border-radius:8px;box-shadow:0 12px 48px rgba(0,0,0,.28),0 0 0 2px var(--emas);
+      padding:18px 16px 16px;width:220px;display:none;
       border-top:3px solid var(--emas);
     }
+    .ppk-close{
+      position:absolute;top:7px;right:8px;
+      background:none;border:none;cursor:pointer;
+      color:#aaa;font-size:1rem;line-height:1;padding:2px 5px;
+      border-radius:3px;transition:color .15s,background .15s;
+    }
+    .ppk-close:hover{color:var(--hijau-tua);background:#f0f0f0;}
     .ppk-foto-wrap{
       width:84px;height:84px;border-radius:50%;overflow:hidden;
       margin:0 auto 12px;border:2.5px solid var(--emas);background:var(--abu);
@@ -390,7 +397,19 @@
       display:flex;align-items:center;justify-content:center;
       gap:6px;font-size:.76rem;color:#4a5a50;
     }
-    .ppk-hp-row svg{flex-shrink:0;color:var(--hijau-mid)}
+    .ppk-hp-link{
+      display:inline-flex;align-items:center;gap:6px;
+      background:#25D366;color:#fff;
+      font-family:var(--font-j);font-weight:700;font-size:.72rem;letter-spacing:.04em;
+      padding:5px 12px;border-radius:20px;text-decoration:none;cursor:pointer;
+      transition:background .2s,transform .15s;
+    }
+    .ppk-hp-link:hover{background:#1ebe5a;transform:translateY(-1px);}
+    .ppk-hp-link svg{flex-shrink:0;}
+    .ppk-tel-row{
+      text-align:center;font-size:.7rem;color:#6a7a70;margin-top:6px;
+      font-family:var(--font-j);letter-spacing:.03em;
+    }
 
 @media(max-width:600px){
       .section-pad{padding:52px 0}
@@ -1057,15 +1076,16 @@
 
 <!-- PPK Popup -->
 <div id="ppk-popup">
+  <button class="ppk-close" id="ppk-close" title="Tutup">✕</button>
   <div class="ppk-foto-wrap">
     <img id="ppk-foto" src="" alt="Foto PPK" />
   </div>
   <div class="ppk-kab-label" id="ppk-kab"></div>
   <div class="ppk-nama-label" id="ppk-nama"></div>
   <div class="ppk-hp-row">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.42 2 2 0 0 1 3.6 1.24h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.84A16 16 0 0 0 12 12.92a16 16 0 0 0 4.08 2.09l.94-1.94a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 14.92z"/></svg>
-    <span id="ppk-hp"></span>
+    <a id="ppk-hp" class="ppk-hp-link"></a>
   </div>
+  <div class="ppk-tel-row" id="ppk-tel"></div>
 </div>
 
 <!-- KONTAK -->
@@ -1177,50 +1197,50 @@
   /* ── PETA PPK ── */
   const ppkData = {
     /* — SUMATRA UTARA — */
-    'Deli Serdang':         { nama: 'Septian Handi Lukamana', kabupaten: 'Kab. Deli Serdang',          telepon: '+62 812 3456 7890', foto: 'foto-ppk/septian-deliserdang.jpeg' },
-    'Kota Medan':           { nama: 'Septian Handi Lukamana', kabupaten: 'Kota Medan',                  telepon: '+62 812 3456 7890', foto: 'foto-ppk/septian-kotamedan.jpeg' },
-    'Langkat':              { nama: 'Septian Handi Lukamana', kabupaten: 'Kab. Langkat',                telepon: '+62 812 3456 7890', foto: 'foto-ppk/septian-langkat.jpeg' },
-    'Tapanuli Selatan':     { nama: 'Hari Saputra',           kabupaten: 'Kab. Tapanuli Selatan',       telepon: '+62 813 2345 6789', foto: 'foto-ppk/andre-tapanuliselatan.jpeg' },
-    'Mandailing Natal':     { nama: 'Hari Saputra',           kabupaten: 'Kab. Mandailing Natal',       telepon: '+62 813 2345 6789', foto: 'foto-ppk/andre-mandailingnatal.jpeg' },
-    'Kota Padangsidimpuan': { nama: 'Hari Saputra',           kabupaten: 'Kota Padangsidimpuan',        telepon: '+62 813 2345 6789', foto: 'foto-ppk/andre-kotapadangsidimpuan.jpeg' },
-    'Padang Lawas':         { nama: 'Surya Ramadhan',         kabupaten: 'Kab. Padang Lawas',           telepon: '+62 821 9876 5432', foto: 'foto-ppk/surya-padanglawas.jpeg' },
-    'Padang Lawas Utara':   { nama: 'Surya Ramadhan',         kabupaten: 'Kab. Padang Lawas Utara',     telepon: '+62 821 9876 5432', foto: 'foto-ppk/surya-padanglawasutara.jpeg' },
-    'Tapanuli Utara':       { nama: 'Yudi Triaga Putra',      kabupaten: 'Kab. Tapanuli Utara',         telepon: '+62 852 7654 3210', foto: 'foto-ppk/aga-tapanuliutara.jpeg' },
-    'Tapanuli Tengah':      { nama: 'Dewi Sartika',           kabupaten: 'Kab. Tapanuli Tengah',        telepon: '+62 856 1234 5678', foto: 'foto-ppk/dewi-tapanulitengah.jpeg' },
-    'Labuhanbatu':          { nama: 'Cosvintara',             kabupaten: 'Kab. Labuhanbatu',            telepon: '+62 822 3456 7891', foto: 'foto-ppk/cosvin-Labuhabatu.jpeg' },
-    'Labuhanbatu Selatan':  { nama: 'Cosvintara',             kabupaten: 'Kab. Labuhanbatu Selatan',    telepon: '+62 822 3456 7891', foto: 'foto-ppk/cosvin-Labuhabatuselatan.jpeg' },
+    'Deli Serdang':         { nama: 'Septian Handi Lukamana', kabupaten: 'Kab. Deli Serdang',           telepon: '+62 812-6462-1554', foto: 'foto-ppk/septian-deliserdang.jpeg' },
+    'Kota Medan':           { nama: 'Septian Handi Lukamana', kabupaten: 'Kota Medan',                  telepon: '+62 812-6462-1554', foto: 'foto-ppk/septian-kotamedan.jpeg' },
+    'Langkat':              { nama: 'Septian Handi Lukamana', kabupaten: 'Kab. Langkat',                telepon: '+62 812-6462-1554', foto: 'foto-ppk/septian-langkat.jpeg' },
+    'Tapanuli Selatan':     { nama: 'Hari Saputra',           kabupaten: 'Kab. Tapanuli Selatan',       telepon: '', foto: 'foto-ppk/andre-tapanuliselatan.jpeg' },
+    'Mandailing Natal':     { nama: 'Hari Saputra',           kabupaten: 'Kab. Mandailing Natal',       telepon: '', foto: 'foto-ppk/andre-mandailingnatal.jpeg' },
+    'Kota Padangsidimpuan': { nama: 'Hari Saputra',           kabupaten: 'Kota Padangsidimpuan',        telepon: '', foto: 'foto-ppk/andre-kotapadangsidimpuan.jpeg' },
+    'Padang Lawas':         { nama: 'Surya Ramadhan',         kabupaten: 'Kab. Padang Lawas',           telepon: '+62 813-6162-0814', foto: 'foto-ppk/surya-padanglawas.jpeg' },
+    'Padang Lawas Utara':   { nama: 'Surya Ramadhan',         kabupaten: 'Kab. Padang Lawas Utara',     telepon: '+62 813-6162-0814', foto: 'foto-ppk/surya-padanglawasutara.jpeg' },
+    'Tapanuli Utara':       { nama: 'Yudi Triaga Putra',      kabupaten: 'Kab. Tapanuli Utara',         telepon: '+62 812-3004-0000', foto: 'foto-ppk/aga-tapanuliutara.jpeg' },
+    'Tapanuli Tengah':      { nama: 'Dewi Sartika',           kabupaten: 'Kab. Tapanuli Tengah',        telepon: '+62 822-7492-4171', foto: 'foto-ppk/dewi-tapanulitengah.jpeg' },
+    'Labuhanbatu':          { nama: 'Cosvintara',             kabupaten: 'Kab. Labuhanbatu',            telepon: '+62 822-7701-8244', foto: 'foto-ppk/cosvin-Labuhabatu.jpeg' },
+    'Labuhanbatu Selatan':  { nama: 'Cosvintara',             kabupaten: 'Kab. Labuhanbatu Selatan',    telepon: '+62 822-7701-8244', foto: 'foto-ppk/cosvin-Labuhabatuselatan.jpeg' },
     /* — LAMPUNG — */
-    'Lampung Barat':        { nama: 'M. Ridho Fikri',         kabupaten: 'Kab. Lampung Barat',          telepon: '+62 851 7890 1234', foto: 'foto-ppk/ridhofikri-lampungbarat.jpeg' },
-    'Lampung Tengah A':     { nama: 'Andi A',                 kabupaten: 'Kab. Lampung Tengah',         telepon: '+62 857 2345 6789', foto: 'foto-ppk/andi-lampungtengah.jpeg' },
-    'Lampung Tengah B':     { nama: 'Sutriono',               kabupaten: 'Kab. Lampung Tengah',         telepon: '+62 878 3456 7890', foto: 'foto-ppk/sutriono-lampungtengah.jpeg' },
-    'Way Kanan':            { nama: 'Hardiyanto',             kabupaten: 'Kab. Way Kanan',              telepon: '+62 881 4567 8901', foto: 'foto-ppk/hardi-waykanan.jpeg' },
-    'Pesawaran':            { nama: 'Andi A',                 kabupaten: 'Kab. Pesawaran',              telepon: '+62 857 2345 6789', foto: 'foto-ppk/andi-pesawaran.jpeg' },
+    'Lampung Barat':        { nama: 'M. Ridho Fikri',         kabupaten: 'Kab. Lampung Barat',          telepon: '+62 895-0944-2653', foto: 'foto-ppk/ridhofikri-lampungbarat.jpeg' },
+    'Lampung Tengah A':     { nama: 'Andi A',                 kabupaten: 'Kab. Lampung Tengah',         telepon: '+62 821-7995-7484', foto: 'foto-ppk/andi-lampungtengah.jpeg' },
+    'Lampung Tengah B':     { nama: 'Sutriono',               kabupaten: 'Kab. Lampung Tengah',         telepon: '+62 852-6963-8603', foto: 'foto-ppk/sutriono-lampungtengah.jpeg' },
+    'Way Kanan':            { nama: 'Hardiyanto',             kabupaten: 'Kab. Way Kanan',              telepon: '+62 812-7332-5386', foto: 'foto-ppk/hardi-waykanan.jpeg' },
+    'Pesawaran':            { nama: 'Andi A',                 kabupaten: 'Kab. Pesawaran',              telepon: '+62 821-7995-7484', foto: 'foto-ppk/andi-pesawaran.jpeg' },
     /* — JAWA TENGAH — */
-    'Cilacap':              { nama: 'Wahono',                 kabupaten: 'Kab. Cilacap',                telepon: '+62 812 5678 9012', foto: '' },
-    'Wonosobo':             { nama: 'Hidin Riyanto',          kabupaten: 'Kab. Wonosobo',               telepon: '+62 813 6789 0123', foto: 'foto-ppk/hidin-wonosobo.jpeg' },
-    'Banyumas':             { nama: 'Tegas Witjaksono',       kabupaten: 'Kab. Banyumas',               telepon: '+62 812 3456 7890', foto: 'foto-ppk/tegas-banyumas.jpeg' },
-    'Purbalingga':          { nama: 'A. Izzazuddin',          kabupaten: 'Kab. Purbalingga',            telepon: '+62 821 7890 1234', foto: 'foto-ppk/izazuddin-purbalingga.jpeg' },
-    'Banjarnegara':         { nama: 'Satriya Denny Irawan',   kabupaten: 'Kab. Banjarnegara',           telepon: '+62 856 8901 2345', foto: 'foto-ppk/denny-banjarnegara.jpeg' },
-    'Tegal':                { nama: 'Herlambang Adi Irawan',  kabupaten: 'Kab. Tegal',                  telepon: '+62 856 7890 1234', foto: 'foto-ppk/irawan-tegal.jpeg' },
-    'Brebes':               { nama: 'Syaban Jauhari',         kabupaten: 'Kab. Brebes',                 telepon: '+62 822 4567 8901', foto: 'foto-ppk/syaban-brebes.jpeg' },
-    'Pemalang':             { nama: 'Yogi Budiarso',          kabupaten: 'Kab. Pemalang',               telepon: '+62 851 5678 9012', foto: 'foto-ppk/budiarso-pemalang.jpeg' },
-    'Pekalongan':           { nama: 'Susilo Santoso',         kabupaten: 'Kab. Pekalongan',             telepon: '+62 852 6789 0123', foto: 'foto-ppk/susilo-pekalongan.jpeg' },
-    'Batang':               { nama: 'Arbinda Achaddi',        kabupaten: 'Kab. Batang',                 telepon: '+62 857 9012 3456', foto: '' },
+    'Cilacap':              { nama: 'Wahono',                 kabupaten: 'Kab. Cilacap',                telepon: '+62 813-1520-3746', foto: 'foto-ppk/wahono-cilacap.jpeg' },
+    'Wonosobo':             { nama: 'Hidin Riyanto',          kabupaten: 'Kab. Wonosobo',               telepon: '+62 852-9226-5250', foto: 'foto-ppk/hidin-wonosobo.jpeg' },
+    'Banyumas':             { nama: 'Tegas Witjaksono',       kabupaten: 'Kab. Banyumas',               telepon: '+62 852-2708-5447', foto: 'foto-ppk/tegas-banyumas.jpeg' },
+    'Purbalingga':          { nama: 'A. Izzazuddin',          kabupaten: 'Kab. Purbalingga',            telepon: '+62 851-7528-6405', foto: 'foto-ppk/izazuddin-purbalingga.jpeg' },
+    'Banjarnegara':         { nama: 'Satriya Denny Irawan',   kabupaten: 'Kab. Banjarnegara',           telepon: '+62 811-2880-383', foto: 'foto-ppk/denny-banjarnegara.jpeg' },
+    'Tegal':                { nama: 'Herlambang Adi Irawan',  kabupaten: 'Kab. Tegal',                  telepon: '+62 857-4235-2078', foto: 'foto-ppk/irawan-tegal.jpeg' },
+    'Brebes':               { nama: 'Syaban Jauhari',         kabupaten: 'Kab. Brebes',                 telepon: '+62 877-4970-0456', foto: 'foto-ppk/syaban-brebes.jpeg' },
+    'Pemalang':             { nama: 'Yogi Budiarso',          kabupaten: 'Kab. Pemalang',               telepon: '+62 819-0119-6600', foto: 'foto-ppk/budiarso-pemalang.jpeg' },
+    'Pekalongan':           { nama: 'Susilo Santoso',         kabupaten: 'Kab. Pekalongan',             telepon: '+62 823-2685-4526', foto: 'foto-ppk/susilo-pekalongan.jpeg' },
+    'Batang':               { nama: 'Arbinda Achaddi',        kabupaten: 'Kab. Batang',                 telepon: '+62 856-2910-018', foto: 'foto-ppk/arbinda-batang.jpeg' },
     /* — JAWA TIMUR — */
-    'Malang':               { nama: 'Dewa Hu',                kabupaten: 'Kab. Malang',                 telepon: '+62 852 4567 8901', foto: 'foto-ppk/dewa-malang.jpeg' },
+    'Malang':               { nama: 'Dewa Hu',                kabupaten: 'Kab. Malang',                 telepon: '+62 822-4475-6215', foto: 'foto-ppk/dewa-malang.jpeg' },
     /* — SULAWESI SELATAN — */
-    'Bulukumba':            { nama: 'Wahyudin',               kabupaten: 'Kab. Bulukumba',              telepon: '+62 878 8901 2345', foto: 'foto-ppk/wahyudin-bulukumba.jpeg' },
-    'Gowa':                 { nama: 'Irsan PH',               kabupaten: 'Kab. Gowa',                   telepon: '+62 881 9012 3456', foto: 'foto-ppk/irsan-gowa.jpeg' },
-    'Sidrap':               { nama: 'Ridho Ilahi',            kabupaten: 'Kab. Sidenreng Rappang',      telepon: '+62 822 2345 6789', foto: 'foto-ppk/ridho-sidrap.jpeg' },
-    'Maros':                { nama: 'Mursalin',               kabupaten: 'Kab. Maros',                  telepon: '+62 821 1234 5678', foto: 'foto-ppk/mursalin-maros.jpeg' },
-    'Luwu Utara':           { nama: 'Bambang Supriadi',       kabupaten: 'Kab. Luwu Utara',             telepon: '+62 813 0123 4567', foto: 'foto-ppk/bambang-luwuutara.jpeg' },
+    'Bulukumba':            { nama: 'Wahyudin',               kabupaten: 'Kab. Bulukumba',              telepon: '+62 882-0190-46301', foto: 'foto-ppk/wahyudin-bulukumba.jpeg' },
+    'Gowa':                 { nama: 'Irsan PH',               kabupaten: 'Kab. Gowa',                   telepon: '+62 823-9539-9871', foto: 'foto-ppk/irsan-gowa.jpeg' },
+    'Sidrap':               { nama: 'Ridho Ilahi',            kabupaten: 'Kab. Sidenreng Rappang',      telepon: '+62 823-1388-8322', foto: 'foto-ppk/ridho-sidrap.jpeg' },
+    'Maros':                { nama: 'Mursalin',               kabupaten: 'Kab. Maros',                  telepon: '+62 896-7675-9222', foto: 'foto-ppk/mursalin-maros.jpeg' },
+    'Luwu Utara':           { nama: 'Bambang Supriadi',       kabupaten: 'Kab. Luwu Utara',             telepon: '+62 822-9150-6152', foto: 'foto-ppk/bambang-luwuutara.jpeg' },
     /* — SULAWESI TENGAH — */
-    'Sigi':                 { nama: 'Abdul Haris',            kabupaten: 'Kab. Sigi',                   telepon: '+62 813 5678 9012', foto: '' },
-    'Donggala':             { nama: 'Adi Windoro',            kabupaten: 'Kab. Donggala',               telepon: '+62 821 6789 0123', foto: '' },
-    'Poso':                 { nama: 'Adi Windoro',            kabupaten: 'Kab. Poso',                   telepon: '+62 821 6789 0123', foto: '' },
+    'Sigi':                 { nama: 'Abdul Haris',            kabupaten: 'Kab. Sigi',                   telepon: '+62 812-2519-9599', foto: '' },
+    'Donggala':             { nama: 'Adi Windoro',            kabupaten: 'Kab. Donggala',               telepon: '+62 821-8710-2754', foto: '' },
+    'Poso':                 { nama: 'Adi Windoro',            kabupaten: 'Kab. Poso',                   telepon: '+62 821-8710-2754', foto: '' },
     /* — SULAWESI TENGGARA — */
-    'Bombana':              { nama: 'Jaswan',                 kabupaten: 'Kab. Bombana',                telepon: '+62 857 7890 1234', foto: 'foto-ppk/jaswan-bombana.jpeg' },
-    'Konawe Selatan':       { nama: 'Suci Rahmadani',         kabupaten: 'Kab. Konawe Selatan',         telepon: '+62 851 3456 7890', foto: 'foto-ppk/suci-konaweselatan.jpeg' },
+    'Bombana':              { nama: 'Jaswan',                 kabupaten: 'Kab. Bombana',                telepon: '+62 853-9863-1830', foto: 'foto-ppk/jaswan-bombana.jpeg' },
+    'Konawe Selatan':       { nama: 'Suci Rahmadani',         kabupaten: 'Kab. Konawe Selatan',         telepon: '+62 822-4136-0586', foto: 'foto-ppk/suci-konaweselatan.jpeg' },
   };
 
   const mapJateng = L.map('map-jateng', { zoomControl: true })
@@ -1232,8 +1252,28 @@
   }).addTo(mapJateng);
 
   const popup = document.getElementById('ppk-popup');
+  let hideTimer = null;
+
+  function cancelHide() {
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+  }
+
+  function scheduleHide() {
+    cancelHide();
+    hideTimer = setTimeout(function() { popup.style.display = 'none'; }, 250);
+  }
+
+  popup.addEventListener('mouseenter', cancelHide);
+  popup.addEventListener('mouseleave', scheduleHide);
+
+  document.getElementById('ppk-close').addEventListener('click', function(e) {
+    e.stopPropagation();
+    cancelHide();
+    popup.style.display = 'none';
+  });
 
   function posPopup(cx, cy) {
+    popup.style.display = 'block';
     const pw = popup.offsetWidth, ph = popup.offsetHeight;
     const ww = window.innerWidth, wh = window.innerHeight;
     let l = cx + 18, t = cy - ph / 2;
@@ -1245,8 +1285,8 @@
   }
 
   function showPPK(data, clientX, clientY) {
-    const fotoEl  = document.getElementById('ppk-foto');
-    const wrapEl  = fotoEl.closest('.ppk-foto-wrap');
+    const fotoEl = document.getElementById('ppk-foto');
+    const wrapEl = fotoEl.closest('.ppk-foto-wrap');
     if (data.foto) {
       fotoEl.src = data.foto;
       wrapEl.style.display = 'block';
@@ -1255,8 +1295,12 @@
     }
     document.getElementById('ppk-kab').textContent  = data.kabupaten;
     document.getElementById('ppk-nama').textContent = data.nama;
-    document.getElementById('ppk-hp').textContent   = data.telepon;
-    popup.style.display = 'block';
+    const waNum = data.telepon.replace(/\D/g, '').replace(/^0/, '62');
+    const waUrl = 'https://wa.me/' + waNum;
+    const hpEl  = document.getElementById('ppk-hp');
+    hpEl.onclick = function(e) { e.stopPropagation(); window.open(waUrl); };
+    hpEl.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.556 4.118 1.528 5.85L.057 23.5l5.797-1.522A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0m0 22c-1.88 0-3.645-.51-5.162-1.4l-.37-.22-3.44.902.92-3.352-.24-.387A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10"/></svg>Chat WhatsApp`;
+    document.getElementById('ppk-tel').textContent = data.telepon;
     posPopup(clientX, clientY);
   }
 
@@ -1324,18 +1368,13 @@
 
     marker.on({
       mouseover: function(e) {
+        cancelHide();
         marker.setIcon(createPinIcon('#DAA628'));
         if (data) showPPK(data, e.originalEvent.clientX, e.originalEvent.clientY);
       },
-      mousemove: function(e) {
-        posPopup(e.originalEvent.clientX, e.originalEvent.clientY);
-      },
       mouseout: function() {
         marker.setIcon(createPinIcon('#2F6C3F'));
-        popup.style.display = 'none';
-      },
-      click: function(e) {
-        if (data) showPPK(data, e.originalEvent.clientX, e.originalEvent.clientY);
+        scheduleHide();
       }
     });
   });
@@ -1351,20 +1390,19 @@
   const officeData = {
     kabupaten: 'Kantor Pusat',
     nama: 'PT Gresik Cipta Sejahtera',
-    telepon: '031 398 5543 / 031 398 4822',
+    telepon: '031 398 5543 / 031 398 4822 / 031 395 1894',
     foto: 'logo-gcs.png'
   };
 
   const officeMarker = L.marker([-7.1605, 112.6327], { icon: officeIcon, zIndexOffset: 1000 }).addTo(mapJateng);
   officeMarker.on({
-    mouseover: function(e) { showPPK(officeData, e.originalEvent.clientX, e.originalEvent.clientY); },
-    mousemove: function(e) { posPopup(e.originalEvent.clientX, e.originalEvent.clientY); },
-    mouseout:  function()  { popup.style.display = 'none'; },
-    click:     function(e) { showPPK(officeData, e.originalEvent.clientX, e.originalEvent.clientY); }
-  });
-
-  document.addEventListener('click', function(e) {
-    if (!e.target.closest('#map-jateng')) popup.style.display = 'none';
+    mouseover: function(e) {
+      cancelHide();
+      showPPK(officeData, e.originalEvent.clientX, e.originalEvent.clientY);
+    },
+    mouseout: function() {
+      scheduleHide();
+    }
   });
 </script>
 <script>
