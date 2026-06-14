@@ -42,8 +42,8 @@
       100% { opacity:1; transform:scale(1) rotate(0); }
     }
     @keyframes confetti-fall {
-      0%   { transform:translateY(-20px) rotate(0deg); opacity:1; }
-      100% { transform:translateY(100vh) rotate(720deg); opacity:0; }
+      0%   { transform:translateY(-40px) rotate(0deg); opacity:1; }
+      100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
     }
     @keyframes tile-winner-pulse {
       0%,100% { box-shadow:0 0 0 4px var(--emas), 0 0 30px rgba(218,166,40,.6); }
@@ -67,7 +67,7 @@
       padding: 68px 28px 20px;
       position: relative;
       background: radial-gradient(ellipse at center, rgba(47,108,63,.15) 0%, transparent 70%);
-      overflow: hidden;
+      overflow: visible;
       height: 100vh;
     }
 
@@ -123,6 +123,7 @@
       gap: 7px;
       width: 100%;
       flex: 1;
+      min-height: 0;
       overflow: hidden;
     }
 
@@ -244,15 +245,23 @@
     /* ── WINNER OVERLAY ── */
     .winner-overlay {
       display: none;
-      position: absolute;
+      position: fixed;
       inset: 0;
       background: rgba(10,22,17,.88);
-      z-index: 200;
+      z-index: 9999;
       align-items: center;
       justify-content: center;
       flex-direction: column;
     }
     .winner-overlay.active { display: flex; }
+
+    /* Fullscreen: overlay harus ikut di dalam konteks fullscreen */
+    .wall-area:fullscreen .winner-overlay,
+    .wall-area:-webkit-full-screen .winner-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 9999;
+    }
 
     .winner-box {
       background: linear-gradient(135deg, #0d2218, #1a3d28);
@@ -339,10 +348,22 @@
     .winner-btn-tutup:hover { background: rgba(255,255,255,.18); color: var(--putih); }
 
     /* ── CONFETTI ── */
-    .confetti-piece {
+    #confettiContainer {
       position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10000;
+      overflow: hidden;
+    }
+    /* dalam fullscreen, fixed → absolute agar ikut viewport fullscreen */
+    .wall-area:fullscreen #confettiContainer,
+    .wall-area:-webkit-full-screen #confettiContainer {
+      position: absolute;
+    }
+
+    .confetti-piece {
+      position: absolute;
       top: -20px;
-      z-index: 300;
       border-radius: 2px;
       animation: confetti-fall linear forwards;
       pointer-events: none;
@@ -583,6 +604,9 @@
       </button>
     </div>
 
+    <!-- ══ CONFETTI CONTAINER ══ -->
+    <div id="confettiContainer"></div>
+
     <!-- ══ WINNER OVERLAY (di dalam wall-area agar muncul di fullscreen) ══ -->
     <div class="winner-overlay" id="winnerOverlay">
       <div class="winner-box">
@@ -814,19 +838,20 @@
   // ── CONFETTI ──
   function launchConfetti() {
     const colors = ['#DAA628','#EFC719','#2F6C3F','#347645','#fff','#ffe066','#7ee8a2'];
-    for (let i = 0; i < 90; i++) {
+    const container = document.getElementById('confettiContainer');
+    for (let i = 0; i < 130; i++) {
       setTimeout(() => {
         const el = document.createElement('div');
         el.className = 'confetti-piece';
-        el.style.left = Math.random() * 100 + 'vw';
+        el.style.left = Math.random() * 100 + '%';
         el.style.background = colors[Math.floor(Math.random() * colors.length)];
-        el.style.width  = (6 + Math.random() * 8) + 'px';
-        el.style.height = (8 + Math.random() * 12) + 'px';
+        el.style.width  = (6 + Math.random() * 10) + 'px';
+        el.style.height = (8 + Math.random() * 14) + 'px';
         el.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
-        el.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 5500);
-      }, i * 25);
+        el.style.animationDuration = (2.5 + Math.random() * 3) + 's';
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 6000);
+      }, i * 20);
     }
   }
 
