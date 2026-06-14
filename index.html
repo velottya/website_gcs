@@ -382,8 +382,13 @@
     .ppk-foto-wrap{
       width:84px;height:84px;border-radius:50%;overflow:hidden;
       margin:0 auto 12px;border:2.5px solid var(--emas);background:var(--abu);
+      position:relative;
     }
-    .ppk-foto-wrap img{width:100%;height:100%;object-fit:cover;object-position:top}
+    .ppk-foto-wrap img{width:100%;height:100%;object-fit:cover;object-position:top;position:relative;z-index:1}
+    #ppk-avatar-ph{
+      display:none;position:absolute;inset:0;
+      align-items:center;justify-content:center;background:#e8ede9;
+    }
     .ppk-kab-label{
       font-family:var(--font-j);font-weight:700;font-size:.6rem;
       text-transform:uppercase;letter-spacing:.12em;color:var(--emas);
@@ -1079,6 +1084,11 @@
   <button class="ppk-close" id="ppk-close" title="Tutup">✕</button>
   <div class="ppk-foto-wrap">
     <img id="ppk-foto" src="" alt="Foto PPK" />
+    <div id="ppk-avatar-ph">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#9aaa9e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" width="42" height="42">
+        <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      </svg>
+    </div>
   </div>
   <div class="ppk-kab-label" id="ppk-kab"></div>
   <div class="ppk-nama-label" id="ppk-nama"></div>
@@ -1286,12 +1296,14 @@
 
   function showPPK(data, clientX, clientY) {
     const fotoEl = document.getElementById('ppk-foto');
-    const wrapEl = fotoEl.closest('.ppk-foto-wrap');
+    const phEl   = document.getElementById('ppk-avatar-ph');
     if (data.foto) {
-      fotoEl.src = data.foto;
-      wrapEl.style.display = 'block';
+      fotoEl.src           = data.foto;
+      fotoEl.style.display = 'block';
+      phEl.style.display   = 'none';
     } else {
-      wrapEl.style.display = 'none';
+      fotoEl.style.display = 'none';
+      phEl.style.display   = 'flex';
     }
     document.getElementById('ppk-kab').textContent  = data.kabupaten;
     document.getElementById('ppk-nama').textContent = data.nama;
