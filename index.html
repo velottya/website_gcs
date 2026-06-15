@@ -582,7 +582,7 @@
     <div class="nilai-grid">
       <div class="nilai-card reveal">
         <span class="nilai-num">01</span>
-        <div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M11 17 9 15a5 5 0 0 1 0-7l4-4a5 5 0 0 1 7 7l-1.5 1.5"/><path d="m13 7 2 2a5 5 0 0 1 0 7l-4 4a5 5 0 0 1-7-7L5.5 11.5"/></svg></div>
+        <div class="ni-icon"><svg viewBox="0 0 24 24"><path d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15"/><path d="M11 12 5.12 2.2"/><path d="m13 12 5.88-9.8"/><path d="M8 7h8"/><circle cx="12" cy="17" r="5"/><path d="M12 18v-2h-.5"/></svg></div>
         <div class="nilai-title">Komitmen</div>
         <p class="nilai-desc">Konsisten dalam menjalankan tugas dan tanggung jawab demi tercapainya tujuan perusahaan.</p>
       </div>
@@ -1152,10 +1152,12 @@
 
   const sections = document.querySelectorAll('section[id]');
   const navAs = document.querySelectorAll('.nav-links a');
+  const sectionNavMap = { visimisi: 'tentang', nilai: 'tentang', milestone: 'tentang' };
   window.addEventListener('scroll', () => {
     let cur = '';
     sections.forEach(s => { if (window.scrollY >= s.offsetTop - 130) cur = s.id; });
-    navAs.forEach(a => { a.style.color = a.getAttribute('href') === '#' + cur ? 'var(--emas)' : ''; });
+    const navId = sectionNavMap[cur] || cur;
+    navAs.forEach(a => { a.style.color = a.getAttribute('href') === '#' + navId ? 'var(--emas)' : ''; });
   });
 </script>
 </body>
