@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     :root{
       --hijau-tua:#0F261F;--hijau-mid:#2F6C3F;--hijau-terang:#347645;
@@ -360,7 +361,62 @@
       .vm-visi{padding:32px 24px}
       .kontak-map-wrap{height:300px}
     }
-    @media(max-width:600px){
+    /* ── PETA PPK ── */
+    #peta{background:var(--abu)}
+    #map-jateng{height:520px;width:100%;border-radius:6px}
+    .leaflet-container{font-family:var(--font-b)}
+    .ppk-pin-icon{background:none!important;border:none!important}
+    #ppk-popup{
+      position:fixed;z-index:9999;background:var(--putih);
+      border-radius:8px;box-shadow:0 12px 48px rgba(0,0,0,.28),0 0 0 2px var(--emas);
+      padding:18px 16px 16px;width:220px;display:none;
+      border-top:3px solid var(--emas);
+    }
+    .ppk-close{
+      position:absolute;top:7px;right:8px;
+      background:none;border:none;cursor:pointer;
+      color:#aaa;font-size:1rem;line-height:1;padding:2px 5px;
+      border-radius:3px;transition:color .15s,background .15s;
+    }
+    .ppk-close:hover{color:var(--hijau-tua);background:#f0f0f0;}
+    .ppk-foto-wrap{
+      width:84px;height:84px;border-radius:50%;overflow:hidden;
+      margin:0 auto 12px;border:2.5px solid var(--emas);background:var(--abu);
+      position:relative;
+    }
+    .ppk-foto-wrap img{width:100%;height:100%;object-fit:cover;object-position:top;position:relative;z-index:1}
+    #ppk-avatar-ph{
+      display:none;position:absolute;inset:0;
+      align-items:center;justify-content:center;background:#e8ede9;
+    }
+    .ppk-kab-label{
+      font-family:var(--font-j);font-weight:700;font-size:.6rem;
+      text-transform:uppercase;letter-spacing:.12em;color:var(--emas);
+      text-align:center;margin-bottom:5px;
+    }
+    .ppk-nama-label{
+      font-family:var(--font-j);font-weight:800;font-size:.88rem;
+      color:var(--hijau-tua);text-align:center;margin-bottom:10px;
+    }
+    .ppk-hp-row{
+      display:flex;align-items:center;justify-content:center;
+      gap:6px;font-size:.76rem;color:#4a5a50;
+    }
+    .ppk-hp-link{
+      display:inline-flex;align-items:center;gap:6px;
+      background:#25D366;color:#fff;
+      font-family:var(--font-j);font-weight:700;font-size:.72rem;letter-spacing:.04em;
+      padding:5px 12px;border-radius:20px;text-decoration:none;cursor:pointer;
+      transition:background .2s,transform .15s;
+    }
+    .ppk-hp-link:hover{background:#1ebe5a;transform:translateY(-1px);}
+    .ppk-hp-link svg{flex-shrink:0;}
+    .ppk-tel-row{
+      text-align:center;font-size:.7rem;color:#6a7a70;margin-top:6px;
+      font-family:var(--font-j);letter-spacing:.03em;
+    }
+
+@media(max-width:600px){
       .section-pad{padding:52px 0}
       .container{padding:0 16px}
       .nav-inner{padding:10px 16px}
@@ -417,6 +473,7 @@
       <li><a href="#produk">Produk</a></li>
       <li><a href="#manajemen">Manajemen</a></li>
       <li><a href="#publikasi">Publikasi</a></li>
+      <li><a href="#peta">Pemasaran</a></li>
       <li><a href="#kontak">Kontak</a></li>
     </ul>
     <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
@@ -434,6 +491,7 @@
   <a href="#produk"    onclick="toggleMenu()">Produk</a>
   <a href="#manajemen" onclick="toggleMenu()">Manajemen</a>
   <a href="#publikasi" onclick="toggleMenu()">Publikasi</a>
+  <a href="#peta"      onclick="toggleMenu()">Peta</a>
   <a href="#kontak"    onclick="toggleMenu()">Kontak</a>
 </div>
 
@@ -1007,6 +1065,39 @@
   </div>
 </section>
 
+<!-- PETA DISTRIBUSI -->
+<section id="peta" class="section-pad">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:50px" class="reveal">
+      <span class="section-label">Distribusi PPK</span>
+      <h2 class="section-title">Jaringan <span>Pemasaran</span></h2>
+      <div class="section-line center"></div>
+    </div>
+    <div class="reveal" style="border-radius:6px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12)">
+      <div id="map-jateng"></div>
+    </div>
+  </div>
+</section>
+
+<!-- PPK Popup -->
+<div id="ppk-popup">
+  <button class="ppk-close" id="ppk-close" title="Tutup">✕</button>
+  <div class="ppk-foto-wrap">
+    <img id="ppk-foto" src="" alt="Foto PPK" />
+    <div id="ppk-avatar-ph">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#9aaa9e" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" width="42" height="42">
+        <circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+      </svg>
+    </div>
+  </div>
+  <div class="ppk-kab-label" id="ppk-kab"></div>
+  <div class="ppk-nama-label" id="ppk-nama"></div>
+  <div class="ppk-hp-row">
+    <a id="ppk-hp" class="ppk-hp-link"></a>
+  </div>
+  <div class="ppk-tel-row" id="ppk-tel"></div>
+</div>
+
 <!-- KONTAK -->
 <section id="kontak" class="section-pad">
   <div class="kontak-bg"></div>
@@ -1111,6 +1202,219 @@
   </div>
 </footer>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  /* ── PETA PPK ── */
+  const ppkData = {
+    /* — SUMATRA UTARA — */
+    'Deli Serdang':         { nama: 'Septian Handi Lukamana', kabupaten: 'Kab. Deli Serdang',           telepon: '+62 812-6462-1554', foto: 'foto-ppk/septian-deliserdang.jpeg' },
+    'Kota Medan':           { nama: 'Septian Handi Lukamana', kabupaten: 'Kota Medan',                  telepon: '+62 812-6462-1554', foto: 'foto-ppk/septian-kotamedan.jpeg' },
+    'Langkat':              { nama: 'Septian Handi Lukamana', kabupaten: 'Kab. Langkat',                telepon: '+62 812-6462-1554', foto: 'foto-ppk/septian-langkat.jpeg' },
+    'Tapanuli Selatan':     { nama: 'Hari Saputra',           kabupaten: 'Kab. Tapanuli Selatan',       telepon: '+62 821-6797-2626', foto: 'foto-ppk/andre-tapanuliselatan.jpeg' },
+    'Mandailing Natal':     { nama: 'Hari Saputra',           kabupaten: 'Kab. Mandailing Natal',       telepon: '+62 821-6797-2626', foto: 'foto-ppk/andre-mandailingnatal.jpeg' },
+    'Kota Padangsidimpuan': { nama: 'Hari Saputra',           kabupaten: 'Kota Padangsidimpuan',        telepon: '+62 821-6797-2626', foto: 'foto-ppk/andre-kotapadangsidimpuan.jpeg' },
+    'Padang Lawas':         { nama: 'Surya Ramadhan',         kabupaten: 'Kab. Padang Lawas',           telepon: '+62 813-6162-0814', foto: 'foto-ppk/surya-padanglawas.jpeg' },
+    'Padang Lawas Utara':   { nama: 'Surya Ramadhan',         kabupaten: 'Kab. Padang Lawas Utara',     telepon: '+62 813-6162-0814', foto: 'foto-ppk/surya-padanglawasutara.jpeg' },
+    'Tapanuli Utara':       { nama: 'Yudi Triaga Putra',      kabupaten: 'Kab. Tapanuli Utara',         telepon: '+62 812-3004-0000', foto: 'foto-ppk/aga-tapanuliutara.jpeg' },
+    'Tapanuli Tengah':      { nama: 'Dewi Sartika',           kabupaten: 'Kab. Tapanuli Tengah',        telepon: '+62 822-7492-4171', foto: 'foto-ppk/dewi-tapanulitengah.jpeg' },
+    'Labuhanbatu':          { nama: 'Cosvintara',             kabupaten: 'Kab. Labuhanbatu',            telepon: '+62 822-7701-8244', foto: 'foto-ppk/cosvin-Labuhabatu.jpeg' },
+    'Labuhanbatu Selatan':  { nama: 'Cosvintara',             kabupaten: 'Kab. Labuhanbatu Selatan',    telepon: '+62 822-7701-8244', foto: 'foto-ppk/cosvin-Labuhabatuselatan.jpeg' },
+    /* — LAMPUNG — */
+    'Lampung Barat':        { nama: 'M. Ridho Fikri',         kabupaten: 'Kab. Lampung Barat',          telepon: '+62 895-0944-2653', foto: 'foto-ppk/ridhofikri-lampungbarat.jpeg' },
+    'Lampung Tengah A':     { nama: 'Andi A',                 kabupaten: 'Kab. Lampung Tengah',         telepon: '+62 821-7995-7484', foto: 'foto-ppk/andi-lampungtengah.jpeg' },
+    'Lampung Tengah B':     { nama: 'Sutriono',               kabupaten: 'Kab. Lampung Tengah',         telepon: '+62 852-6963-8603', foto: 'foto-ppk/sutriono-lampungtengah.jpeg' },
+    'Way Kanan':            { nama: 'Hardiyanto',             kabupaten: 'Kab. Way Kanan',              telepon: '+62 812-7332-5386', foto: 'foto-ppk/hardi-waykanan.jpeg' },
+    'Pesawaran':            { nama: 'Andi A',                 kabupaten: 'Kab. Pesawaran',              telepon: '+62 821-7995-7484', foto: 'foto-ppk/andi-pesawaran.jpeg' },
+    /* — JAWA TENGAH — */
+    'Cilacap':              { nama: 'Wahono',                 kabupaten: 'Kab. Cilacap',                telepon: '+62 813-1520-3746', foto: 'foto-ppk/wahono-cilacap.jpeg' },
+    'Wonosobo':             { nama: 'Hidin Riyanto',          kabupaten: 'Kab. Wonosobo',               telepon: '+62 852-9226-5250', foto: 'foto-ppk/hidin-wonosobo.jpeg' },
+    'Banyumas':             { nama: 'Tegas Witjaksono',       kabupaten: 'Kab. Banyumas',               telepon: '+62 852-2708-5447', foto: 'foto-ppk/tegas-banyumas.jpeg' },
+    'Purbalingga':          { nama: 'A. Izzazuddin',          kabupaten: 'Kab. Purbalingga',            telepon: '+62 851-7528-6405', foto: 'foto-ppk/izazuddin-purbalingga.jpeg' },
+    'Banjarnegara':         { nama: 'Satriya Denny Irawan',   kabupaten: 'Kab. Banjarnegara',           telepon: '+62 811-2880-383', foto: 'foto-ppk/denny-banjarnegara.jpeg' },
+    'Tegal':                { nama: 'Herlambang Adi Irawan',  kabupaten: 'Kab. Tegal',                  telepon: '+62 857-4235-2078', foto: 'foto-ppk/irawan-tegal.jpeg' },
+    'Brebes':               { nama: 'Syaban Jauhari',         kabupaten: 'Kab. Brebes',                 telepon: '+62 877-4970-0456', foto: 'foto-ppk/syaban-brebes.jpeg' },
+    'Pemalang':             { nama: 'Yogi Budiarso',          kabupaten: 'Kab. Pemalang',               telepon: '+62 819-0119-6600', foto: 'foto-ppk/budiarso-pemalang.jpeg' },
+    'Pekalongan':           { nama: 'Susilo Santoso',         kabupaten: 'Kab. Pekalongan',             telepon: '+62 823-2685-4526', foto: 'foto-ppk/susilo-pekalongan.jpeg' },
+    'Batang':               { nama: 'Arbinda Achaddi',        kabupaten: 'Kab. Batang',                 telepon: '+62 856-2910-018', foto: 'foto-ppk/arbinda-batang.jpeg' },
+    /* — JAWA TIMUR — */
+    'Malang':               { nama: 'Dewa Hu',                kabupaten: 'Kab. Malang',                 telepon: '+62 822-4475-6215', foto: 'foto-ppk/dewa-malang.jpeg' },
+    /* — SULAWESI SELATAN — */
+    'Bulukumba':            { nama: 'Wahyudin',               kabupaten: 'Kab. Bulukumba',              telepon: '+62 882-0190-46301', foto: 'foto-ppk/wahyudin-bulukumba.jpeg' },
+    'Gowa':                 { nama: 'Irsan PH',               kabupaten: 'Kab. Gowa',                   telepon: '+62 823-9539-9871', foto: 'foto-ppk/irsan-gowa.jpeg' },
+    'Sidrap':               { nama: 'Ridho Ilahi',            kabupaten: 'Kab. Sidenreng Rappang',      telepon: '+62 823-1388-8322', foto: 'foto-ppk/ridho-sidrap.jpeg' },
+    'Maros':                { nama: 'Mursalin',               kabupaten: 'Kab. Maros',                  telepon: '+62 896-7675-9222', foto: 'foto-ppk/mursalin-maros.jpeg' },
+    'Luwu Utara':           { nama: 'Bambang Supriadi',       kabupaten: 'Kab. Luwu Utara',             telepon: '+62 822-9150-6152', foto: 'foto-ppk/bambang-luwuutara.jpeg' },
+    /* — SULAWESI TENGAH — */
+    'Sigi':                 { nama: 'Abdul Haris',            kabupaten: 'Kab. Sigi',                   telepon: '+62 812-2519-9599', foto: 'foto-ppk/haris-sigi.jpeg' },
+    'Donggala':             { nama: 'Adi Windoro',            kabupaten: 'Kab. Donggala',               telepon: '+62 821-8710-2754', foto: 'foto-ppk/windoro-donggala.jpeg' },
+    'Poso':                 { nama: 'Adi Windoro',            kabupaten: 'Kab. Poso',                   telepon: '+62 821-8710-2754', foto: 'foto-ppk/windoro-donggala.jpeg' },
+    /* — SULAWESI TENGGARA — */
+    'Bombana':              { nama: 'Jaswan',                 kabupaten: 'Kab. Bombana',                telepon: '+62 853-9863-1830', foto: 'foto-ppk/jaswan-bombana.jpeg' },
+    'Konawe Selatan':       { nama: 'Suci Rahmadani',         kabupaten: 'Kab. Konawe Selatan',         telepon: '+62 822-4136-0586', foto: 'foto-ppk/suci-konaweselatan.jpeg' },
+  };
+
+  const mapJateng = L.map('map-jateng', { zoomControl: true })
+    .setView([-2.5, 110], 5);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 13
+  }).addTo(mapJateng);
+
+  const popup = document.getElementById('ppk-popup');
+  let hideTimer = null;
+
+  function cancelHide() {
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null; }
+  }
+
+  function scheduleHide() {
+    cancelHide();
+    hideTimer = setTimeout(function() { popup.style.display = 'none'; }, 250);
+  }
+
+  popup.addEventListener('mouseenter', cancelHide);
+  popup.addEventListener('mouseleave', scheduleHide);
+
+  document.getElementById('ppk-close').addEventListener('click', function(e) {
+    e.stopPropagation();
+    cancelHide();
+    popup.style.display = 'none';
+  });
+
+  function posPopup(cx, cy) {
+    popup.style.display = 'block';
+    const pw = popup.offsetWidth, ph = popup.offsetHeight;
+    const ww = window.innerWidth, wh = window.innerHeight;
+    let l = cx + 18, t = cy - ph / 2;
+    if (l + pw > ww - 8) l = cx - pw - 18;
+    if (t < 8) t = 8;
+    if (t + ph > wh - 8) t = wh - ph - 8;
+    popup.style.left = l + 'px';
+    popup.style.top  = t + 'px';
+  }
+
+  function showPPK(data, clientX, clientY) {
+    const fotoEl = document.getElementById('ppk-foto');
+    const wrapEl = fotoEl.closest('.ppk-foto-wrap');
+    if (data.foto) {
+      fotoEl.src = data.foto;
+      wrapEl.style.display = 'block';
+    } else {
+      wrapEl.style.display = 'none';
+    }
+    document.getElementById('ppk-kab').textContent  = data.kabupaten;
+    document.getElementById('ppk-nama').textContent = data.nama;
+    const waNum = data.telepon.replace(/\D/g, '').replace(/^0/, '62');
+    const waUrl = 'https://wa.me/' + waNum;
+    const hpEl  = document.getElementById('ppk-hp');
+    hpEl.onclick = function(e) { e.stopPropagation(); window.open(waUrl); };
+    hpEl.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.556 4.118 1.528 5.85L.057 23.5l5.797-1.522A11.954 11.954 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0m0 22c-1.88 0-3.645-.51-5.162-1.4l-.37-.22-3.44.902.92-3.352-.24-.387A9.96 9.96 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10"/></svg>Chat WhatsApp`;
+    document.getElementById('ppk-tel').textContent = data.telepon;
+    posPopup(clientX, clientY);
+  }
+
+  const markerPoints = [
+    /* — SUMATRA UTARA — */
+    { latlng: [3.50,  98.80],  name: 'Deli Serdang' },
+    { latlng: [3.60,  98.68],  name: 'Kota Medan' },
+    { latlng: [3.80,  98.15],  name: 'Langkat' },
+    { latlng: [1.50,  99.27],  name: 'Tapanuli Selatan' },
+    { latlng: [0.60,  99.40],  name: 'Mandailing Natal' },
+    { latlng: [1.38,  99.27],  name: 'Kota Padangsidimpuan' },
+    { latlng: [1.20,  99.75],  name: 'Padang Lawas' },
+    { latlng: [1.70,  99.65],  name: 'Padang Lawas Utara' },
+    { latlng: [2.28,  98.96],  name: 'Tapanuli Utara' },
+    { latlng: [1.73,  98.74],  name: 'Tapanuli Tengah' },
+    { latlng: [2.05, 100.13],  name: 'Labuhanbatu' },
+    { latlng: [1.82, 100.00],  name: 'Labuhanbatu Selatan' },
+    /* — LAMPUNG — */
+    { latlng: [-4.90, 104.05], name: 'Lampung Barat' },
+    { latlng: [-4.82, 105.14], name: 'Lampung Tengah A' },
+    { latlng: [-4.82, 105.22], name: 'Lampung Tengah B' },
+    { latlng: [-4.55, 104.62], name: 'Way Kanan' },
+    { latlng: [-5.38, 105.17], name: 'Pesawaran' },
+    /* — JAWA TENGAH — */
+    { latlng: [-7.73, 109.02], name: 'Cilacap' },
+    { latlng: [-7.36, 109.91], name: 'Wonosobo' },
+    { latlng: [-7.42, 109.23], name: 'Banyumas' },
+    { latlng: [-7.39, 109.37], name: 'Purbalingga' },
+    { latlng: [-7.39, 109.68], name: 'Banjarnegara' },
+    { latlng: [-6.99, 109.14], name: 'Tegal' },
+    { latlng: [-6.87, 109.04], name: 'Brebes' },
+    { latlng: [-7.02, 109.38], name: 'Pemalang' },
+    { latlng: [-7.02, 109.66], name: 'Pekalongan' },
+    /* — JAWA TENGAH tambahan — */
+    { latlng: [-6.92, 109.73], name: 'Batang' },
+    /* — JAWA TIMUR — */
+    { latlng: [-8.16, 112.63], name: 'Malang' },
+    /* — SULAWESI SELATAN — */
+    { latlng: [-5.59, 120.19], name: 'Bulukumba' },
+    { latlng: [-5.29, 119.74], name: 'Gowa' },
+    { latlng: [-3.87, 119.90], name: 'Sidrap' },
+    { latlng: [-5.00, 119.57], name: 'Maros' },
+    { latlng: [-2.57, 120.63], name: 'Luwu Utara' },
+    /* — SULAWESI TENGAH — */
+    { latlng: [-1.30, 120.00], name: 'Sigi' },
+    { latlng: [-0.70, 119.80], name: 'Donggala' },
+    { latlng: [-1.75, 120.73], name: 'Poso' },
+    /* — SULAWESI TENGGARA — */
+    { latlng: [-4.73, 121.74], name: 'Bombana' },
+    { latlng: [-4.08, 122.37], name: 'Konawe Selatan' },
+  ];
+
+  function createPinIcon(color) {
+    return L.divIcon({
+      html: '<svg xmlns="http://www.w3.org/2000/svg" width="26" height="38" viewBox="0 0 26 38"><path d="M13 0C5.82 0 0 5.82 0 13c0 9.75 13 25 13 25S26 22.75 26 13C26 5.82 20.18 0 13 0z" fill="' + color + '" stroke="#0F261F" stroke-width="1.5"/><circle cx="13" cy="13" r="4.5" fill="white" opacity="0.85"/></svg>',
+      className: 'ppk-pin-icon',
+      iconSize: [26, 38],
+      iconAnchor: [13, 38]
+    });
+  }
+
+  markerPoints.forEach(function(m) {
+    const data = ppkData[m.name];
+    const marker = L.marker(m.latlng, { icon: createPinIcon('#2F6C3F') }).addTo(mapJateng);
+
+    marker.on({
+      mouseover: function(e) {
+        cancelHide();
+        marker.setIcon(createPinIcon('#DAA628'));
+        if (data) showPPK(data, e.originalEvent.clientX, e.originalEvent.clientY);
+      },
+      mouseout: function() {
+        marker.setIcon(createPinIcon('#2F6C3F'));
+        scheduleHide();
+      }
+    });
+  });
+
+  // Kantor Pusat marker
+  const officeIcon = L.divIcon({
+    html: '<svg xmlns="http://www.w3.org/2000/svg" width="34" height="48" viewBox="0 0 34 48"><path d="M17 0C7.611 0 0 7.611 0 17c0 12.75 17 31 17 31S34 29.75 34 17C34 7.611 26.389 0 17 0z" fill="#DAA628" stroke="#0F261F" stroke-width="2"/><text x="17" y="23" text-anchor="middle" font-size="10" font-weight="900" fill="#0F261F" font-family="sans-serif">GCS</text></svg>',
+    className: 'ppk-pin-icon',
+    iconSize: [34, 48],
+    iconAnchor: [17, 48]
+  });
+
+  const officeData = {
+    kabupaten: 'Kantor Pusat',
+    nama: 'PT Gresik Cipta Sejahtera',
+    telepon: '031 398 5543 / 031 398 4822 / 031 395 1894',
+    foto: 'logo-gcs.png'
+  };
+
+  const officeMarker = L.marker([-7.1605, 112.6327], { icon: officeIcon, zIndexOffset: 1000 }).addTo(mapJateng);
+  officeMarker.on({
+    mouseover: function(e) {
+      cancelHide();
+      showPPK(officeData, e.originalEvent.clientX, e.originalEvent.clientY);
+    },
+    mouseout: function() {
+      scheduleHide();
+    }
+  });
+</script>
 <script>
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {

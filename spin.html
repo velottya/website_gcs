@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wall Name Picker – GCS</title>
+  <link rel="icon" type="image/png" href="logo-gcs.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --hijau-tua: #0F261F;
+      --hijau-mid: #2F6C3F;
+      --hijau-terang: #347645;
+      --emas: #DAA628;
+      --emas-terang: #EFC719;
+      --putih: #FFFFFF;
+      --font-j: 'Montserrat', sans-serif;
+      --font-b: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: var(--font-b);
+      background: var(--hijau-tua);
+      color: var(--putih);
+      overflow: hidden;
+    }
+    h1, h2, h3 { font-family: var(--font-j); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--hijau-tua); }
+    ::-webkit-scrollbar-thumb { background: var(--emas); border-radius: 3px; }
+
+    @keyframes fadeIn    { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes popIn     { from { opacity:0; transform:scale(.7); } to { opacity:1; transform:scale(1); } }
+    @keyframes glow-pulse { 0%,100% { box-shadow:0 0 20px rgba(218,166,40,.4); } 50% { box-shadow:0 0 50px rgba(218,166,40,.9),0 0 80px rgba(218,166,40,.4); } }
+    @keyframes winner-appear {
+      0%   { opacity:0; transform:scale(.3) rotate(-10deg); }
+      60%  { opacity:1; transform:scale(1.1) rotate(2deg); }
+      100% { opacity:1; transform:scale(1) rotate(0); }
+    }
+    @keyframes confetti-fall {
+      0%   { transform:translateY(-40px) rotate(0deg); opacity:1; }
+      100% { transform:translateY(110vh) rotate(720deg); opacity:0; }
+    }
+    @keyframes tile-winner-pulse {
+      0%,100% { box-shadow:0 0 0 4px var(--emas), 0 0 30px rgba(218,166,40,.6); }
+      50%      { box-shadow:0 0 0 6px var(--emas-terang), 0 0 60px rgba(239,199,25,.9); }
+    }
+
+    /* ── LAYOUT ── */
+    .app {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── LEFT: WALL AREA ── */
+    .wall-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 68px 28px 20px;
+      position: relative;
+      background: radial-gradient(ellipse at center, rgba(47,108,63,.15) 0%, transparent 70%);
+      overflow: visible;
+      height: 100vh;
+    }
+
+    /* fullscreen host */
+    .wall-area:fullscreen,
+    .wall-area:-webkit-full-screen {
+      background: #0a1a11;
+      padding: 48px 32px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand {
+      position: absolute;
+      top: 22px;
+      left: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .brand img { height: 32px; filter: brightness(0) invert(1); }
+    .brand span {
+      font-family: var(--font-j);
+      font-weight: 900;
+      font-size: .68rem;
+      color: rgba(255,255,255,.65);
+      letter-spacing: .04em;
+    }
+    .wall-area:fullscreen .brand,
+    .wall-area:-webkit-full-screen .brand { display: none; }
+
+    .wall-title {
+      font-family: var(--font-j);
+      font-weight: 900;
+      font-size: clamp(.9rem, 1.8vw, 1.3rem);
+      color: var(--putih);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .wall-title span { color: var(--emas); }
+
+    /* ── GRID ── */
+    .wall-grid {
+      display: grid;
+      /* columns set by JS */
+      grid-auto-rows: 1fr;
+      gap: 7px;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .wall-tile {
+      border-radius: 5px;
+      font-family: var(--font-j);
+      font-weight: 900;
+      text-align: center;
+      color: #000;
+      cursor: default;
+      user-select: none;
+      transition: transform .08s;
+      word-break: break-word;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 8px;
+      /* font-size set by JS */
+    }
+
+    .wall-tile.active {
+      transform: scale(1.06);
+      box-shadow: 0 0 0 4px #fff, 0 0 24px rgba(255,255,255,.7);
+      position: relative;
+      z-index: 2;
+    }
+    .wall-tile.winner {
+      transform: scale(1.08);
+      position: relative;
+      z-index: 3;
+      animation: tile-winner-pulse 1.1s ease-in-out infinite;
+    }
+
+    .wall-empty {
+      font-family: var(--font-j);
+      font-weight: 700;
+      font-size: .85rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.25);
+      text-align: center;
+      padding: 60px 0;
+    }
+
+    /* ── CONTROLS ── */
+    .wall-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .pick-btn {
+      background: linear-gradient(135deg, var(--emas), var(--emas-terang));
+      color: var(--hijau-tua);
+      border: none;
+      padding: 15px 52px;
+      font-family: var(--font-j);
+      font-weight: 900;
+      font-size: .95rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .3s, opacity .3s;
+      box-shadow: 0 6px 28px rgba(218,166,40,.45);
+      animation: glow-pulse 2.5s ease-in-out infinite;
+    }
+    .pick-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(218,166,40,.6); }
+    .pick-btn:active { transform: translateY(0); }
+    .pick-btn:disabled { opacity: .4; cursor: not-allowed; animation: none; transform: none; }
+
+    .fs-btn {
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.75);
+      border: 1px solid rgba(255,255,255,.18);
+      padding: 13px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-j);
+      font-weight: 700;
+      font-size: .72rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: background .2s, color .2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .fs-btn:hover { background: rgba(255,255,255,.16); color: var(--putih); }
+    .fs-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .sound-btn {
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.75);
+      border: 1px solid rgba(255,255,255,.18);
+      padding: 13px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-j);
+      font-weight: 700;
+      font-size: .72rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      transition: background .2s, color .2s, border-color .2s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .sound-btn:hover { background: rgba(255,255,255,.16); color: var(--putih); }
+    .sound-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sound-btn.muted { color: rgba(255,80,80,.65); border-color: rgba(255,80,80,.3); background: rgba(255,80,80,.07); }
+    .sound-btn.muted:hover { background: rgba(255,80,80,.15); color: #ff6060; }
+
+    /* ── WINNER OVERLAY ── */
+    .winner-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(10,22,17,.88);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .winner-overlay.active { display: flex; }
+
+    /* Fullscreen: overlay harus ikut di dalam konteks fullscreen */
+    .wall-area:fullscreen .winner-overlay,
+    .wall-area:-webkit-full-screen .winner-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 9999;
+    }
+
+    .winner-box {
+      background: linear-gradient(135deg, #0d2218, #1a3d28);
+      border: 2px solid rgba(218,166,40,.6);
+      border-radius: 12px;
+      padding: 48px 56px;
+      text-align: center;
+      max-width: 620px;
+      width: 90%;
+      box-shadow: 0 0 80px rgba(218,166,40,.3), 0 30px 80px rgba(0,0,0,.6);
+      animation: popIn .5s cubic-bezier(.175,.885,.32,1.275);
+    }
+
+    .winner-label {
+      font-family: var(--font-j);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--emas);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .winner-label::before, .winner-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(218,166,40,.35);
+    }
+
+    .winner-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+
+    .winner-item {
+      font-family: var(--font-j);
+      font-weight: 900;
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      color: var(--putih);
+      background: rgba(218,166,40,.1);
+      border: 1px solid rgba(218,166,40,.3);
+      border-radius: 6px;
+      padding: 12px 24px;
+      animation: winner-appear .5s cubic-bezier(.175,.885,.32,1.275) both;
+      letter-spacing: .04em;
+    }
+    .winner-item:nth-child(1) { animation-delay:.1s; }
+    .winner-item:nth-child(2) { animation-delay:.25s; }
+    .winner-item:nth-child(3) { animation-delay:.4s; }
+    .winner-item:nth-child(4) { animation-delay:.55s; }
+    .winner-item:nth-child(5) { animation-delay:.7s; }
+
+    .winner-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .winner-btn {
+      padding: 12px 32px;
+      font-family: var(--font-j);
+      font-weight: 900;
+      font-size: .82rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      transition: background .2s, transform .2s;
+    }
+    .winner-btn:hover { transform: translateY(-2px); }
+    .winner-btn-hapus { background: var(--emas); color: var(--hijau-tua); }
+    .winner-btn-hapus:hover { background: var(--emas-terang); }
+    .winner-btn-tutup {
+      background: rgba(255,255,255,.1);
+      color: rgba(255,255,255,.75);
+      border: 1px solid rgba(255,255,255,.2) !important;
+    }
+    .winner-btn-tutup:hover { background: rgba(255,255,255,.18); color: var(--putih); }
+
+    /* ── CONFETTI ── */
+    #confettiContainer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10000;
+      overflow: hidden;
+    }
+    /* dalam fullscreen, fixed → absolute agar ikut viewport fullscreen */
+    .wall-area:fullscreen #confettiContainer,
+    .wall-area:-webkit-full-screen #confettiContainer {
+      position: absolute;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      top: -20px;
+      border-radius: 2px;
+      animation: confetti-fall linear forwards;
+      pointer-events: none;
+    }
+
+    /* ── RIGHT: SETTINGS PANEL ── */
+    .settings-panel {
+      background: rgba(255,255,255,.04);
+      border-left: 1px solid rgba(218,166,40,.15);
+      padding: 24px 20px;
+      overflow-y: auto;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .panel-section-title {
+      font-family: var(--font-j);
+      font-size: .62rem;
+      font-weight: 700;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--emas);
+      margin-bottom: 12px;
+    }
+
+    .pick-count-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pick-count-label {
+      font-size: .84rem;
+      color: rgba(255,255,255,.72);
+      font-weight: 500;
+    }
+    .pick-stepper {
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(218,166,40,.35);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .pick-stepper button {
+      background: rgba(218,166,40,.12);
+      color: var(--emas);
+      border: none;
+      width: 36px;
+      height: 36px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pick-stepper button:hover { background: rgba(218,166,40,.28); }
+    .pick-stepper button:disabled { opacity: .3; cursor: not-allowed; }
+    .pick-count-display {
+      width: 44px;
+      text-align: center;
+      font-family: var(--font-j);
+      font-weight: 900;
+      font-size: 1.1rem;
+      color: var(--putih);
+      border-left: 1px solid rgba(218,166,40,.25);
+      border-right: 1px solid rgba(218,166,40,.25);
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .name-textarea {
+      width: 100%;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(218,166,40,.25);
+      border-radius: 4px;
+      padding: 10px 14px;
+      color: var(--putih);
+      font-family: var(--font-b);
+      font-size: .88rem;
+      line-height: 1.7;
+      outline: none;
+      resize: vertical;
+      min-height: 180px;
+      transition: border-color .2s;
+      display: block;
+    }
+    .name-textarea::placeholder { color: rgba(255,255,255,.22); }
+    .name-textarea:focus { border-color: var(--emas); }
+
+    .name-count-bar {
+      font-size: .74rem;
+      color: rgba(255,255,255,.38);
+      text-align: right;
+      margin-top: 6px;
+    }
+    .name-count-bar span { color: var(--emas); font-weight: 700; }
+
+    .name-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
+      max-height: 260px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+    .name-list::-webkit-scrollbar { width: 4px; }
+    .name-list::-webkit-scrollbar-track { background: transparent; }
+    .name-list::-webkit-scrollbar-thumb { background: rgba(218,166,40,.3); border-radius: 2px; }
+
+    .name-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 4px;
+      padding: 7px 10px;
+      transition: border-color .15s;
+    }
+    .name-tag:hover { border-color: rgba(218,166,40,.25); }
+    .name-tag-num {
+      font-family: var(--font-j);
+      font-weight: 700;
+      font-size: .62rem;
+      color: rgba(218,166,40,.5);
+      width: 18px;
+      flex-shrink: 0;
+    }
+    .name-tag-text {
+      flex: 1;
+      font-size: .86rem;
+      color: rgba(255,255,255,.85);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .name-tag-del {
+      background: none;
+      border: none;
+      color: rgba(255,80,80,.5);
+      cursor: pointer;
+      font-size: .9rem;
+      padding: 2px 4px;
+      border-radius: 3px;
+      transition: color .2s, background .2s;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .name-tag-del:hover { color: #ff5050; background: rgba(255,80,80,.1); }
+
+    .panel-divider { height: 1px; background: rgba(255,255,255,.07); }
+
+    .clear-btn {
+      background: rgba(255,80,80,.07);
+      color: rgba(255,120,120,.72);
+      border: 1px solid rgba(255,80,80,.18);
+      border-radius: 4px;
+      padding: 9px 18px;
+      font-family: var(--font-j);
+      font-weight: 700;
+      font-size: .67rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all .2s;
+      width: 100%;
+    }
+    .clear-btn:hover { background: rgba(255,80,80,.18); color: #ff6060; border-color: rgba(255,80,80,.38); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15,38,31,.96);
+      border: 1px solid rgba(218,166,40,.4);
+      color: var(--putih);
+      font-family: var(--font-j);
+      font-weight: 600;
+      font-size: .76rem;
+      letter-spacing: .06em;
+      padding: 11px 22px;
+      border-radius: 4px;
+      z-index: 400;
+      opacity: 0;
+      transition: opacity .3s, transform .3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 820px) {
+      .app { grid-template-columns: 1fr; }
+      .settings-panel { border-left: none; border-top: 1px solid rgba(218,166,40,.15); max-height: 50vh; }
+      .wall-area { padding: 72px 16px 28px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ══ LEFT: WALL PICKER ══ -->
+  <div class="wall-area" id="wallArea">
+    <a href="index.html" class="brand">
+      <img src="logo-gcs.png" alt="GCS" />
+      <span>PT Gresik Cipta Sejahtera</span>
+    </a>
+
+    <h1 class="wall-title">GCS <span>Name Picker</span></h1>
+
+    <div class="wall-grid" id="wallGrid">
+      <div class="wall-empty"></div>
+    </div>
+
+    <div class="wall-controls">
+      <button class="pick-btn" id="pickBtn" onclick="startPick()">PILIH!</button>
+      <button class="fs-btn" id="fsBtn" onclick="toggleFullscreen()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+        Fullscreen
+      </button>
+      <button class="sound-btn" id="soundBtn" onclick="toggleSound()">
+        <svg id="soundIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+        Suara
+      </button>
+    </div>
+
+    <!-- ══ CONFETTI CONTAINER ══ -->
+    <div id="confettiContainer"></div>
+
+    <!-- ══ WINNER OVERLAY (di dalam wall-area agar muncul di fullscreen) ══ -->
+    <div class="winner-overlay" id="winnerOverlay">
+      <div class="winner-box">
+        <div class="winner-label">Terpilih!</div>
+        <div class="winner-list" id="winnerList"></div>
+        <div class="winner-actions">
+          <button class="winner-btn winner-btn-hapus" onclick="hapusWinner()">Hapus &amp; Tutup</button>
+          <button class="winner-btn winner-btn-tutup" onclick="tutupWinner()">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RIGHT: SETTINGS ══ -->
+  <aside class="settings-panel">
+
+    <div>
+      <div class="panel-section-title">Jumlah yang Dipilih</div>
+      <div class="pick-count-row">
+        <span class="pick-count-label">Pilih berapa orang?</span>
+        <div class="pick-stepper">
+          <button id="btnMinus" onclick="changePickCount(-1)">−</button>
+          <div class="pick-count-display" id="pickDisplay">1</div>
+          <button id="btnPlus" onclick="changePickCount(1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-divider"></div>
+
+    <div>
+      <div class="panel-section-title">Daftar Nama</div>
+      <textarea
+        class="name-textarea"
+        id="nameTextarea"
+        placeholder="Ketik satu nama per baris…&#10;&#10;Contoh:&#10;Budi Santoso&#10;Siti Rahayu&#10;Ahmad Fauzi"
+        oninput="syncNames()"
+      ></textarea>
+      <div class="name-count-bar" id="countBar"><span>0</span> nama terdaftar</div>
+      <div class="name-list" id="nameList"></div>
+    </div>
+
+    <div class="panel-divider"></div>
+
+    <button class="clear-btn" onclick="clearAll()">Hapus Semua Nama</button>
+
+  </aside>
+</div>
+
+<!-- ══ WINNER OVERLAY ══ -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── STATE ──
+  let names = [];
+  let pickCount = 1;
+  let picking = false;
+  let winnersIdx = [];
+  let lastWinners = [];
+  let currentActive = -1;
+  let soundEnabled = true;
+
+  // ── AUDIO ──
+  const winAudio = new Audio('win.wav');
+  winAudio.preload = 'auto';
+
+  function playWin() {
+    if (!soundEnabled) return;
+    winAudio.currentTime = 0;
+    winAudio.play().catch(() => {});
+  }
+
+  function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const btn = document.getElementById('soundBtn');
+    const icon = document.getElementById('soundIcon');
+    btn.classList.toggle('muted', !soundEnabled);
+    if (soundEnabled) {
+      btn.childNodes[btn.childNodes.length - 1].textContent = ' Suara';
+      icon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>`;
+    } else {
+      btn.childNodes[btn.childNodes.length - 1].textContent = ' Bisu';
+      icon.innerHTML = `<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>`;
+    }
+  }
+
+  const TILE_COLORS = [
+    '#2e7d32','#c62828','#6a1b9a','#f57f17','#1565c0',
+    '#ad1457','#00695c','#4e342e','#37474f','#558b2f',
+    '#e64a19','#283593','#00838f','#880e4f','#4527a0',
+    '#f9a825','#0277bd','#d84315','#2e7d32','#6a1b9a',
+  ];
+
+  // ── WALL RENDER ──
+  function getGridLayout(count) {
+    if (count <= 3)  return { cols: count,  fs: '1.4rem' };
+    if (count <= 6)  return { cols: 3,      fs: '1.25rem' };
+    if (count <= 10) return { cols: 4 - (count <= 8 ? 1 : 0), fs: '1.1rem' };
+    if (count <= 15) return { cols: 4,      fs: '1rem' };
+    if (count <= 24) return { cols: 5,      fs: '.9rem' };
+    if (count <= 35) return { cols: 6,      fs: '.8rem' };
+    if (count <= 48) return { cols: 7,      fs: '.72rem' };
+    return                  { cols: 8,      fs: '.65rem' };
+  }
+
+  function renderWall() {
+    const grid = document.getElementById('wallGrid');
+    grid.innerHTML = '';
+    if (names.length === 0) {
+      grid.style.gridTemplateColumns = '1fr';
+      grid.innerHTML = '<div class="wall-empty">Tambahkan nama di panel kanan</div>';
+      return;
+    }
+    const { cols, fs } = getGridLayout(names.length);
+    grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    names.forEach((name, i) => {
+      const div = document.createElement('div');
+      div.className = 'wall-tile';
+      div.id = `tile-${i}`;
+      div.style.background = TILE_COLORS[i % TILE_COLORS.length];
+      div.style.fontSize = fs;
+      div.textContent = name;
+      grid.appendChild(div);
+    });
+  }
+
+  // ── PICK ANIMATION (serentak) ──
+  function startPick() {
+    if (picking) return;
+    if (names.length < 2) { showToast('Tambahkan minimal 2 nama!'); return; }
+    if (pickCount > names.length) { showToast(`Butuh minimal ${pickCount} nama.`); return; }
+
+    picking = true;
+    document.getElementById('pickBtn').disabled = true;
+    document.querySelectorAll('.wall-tile').forEach(t => t.classList.remove('winner', 'active'));
+
+    // Tentukan semua target sekaligus
+    const pool = names.map((_, i) => i);
+    const targets = [];
+    while (targets.length < pickCount) {
+      const ri = Math.floor(Math.random() * pool.length);
+      targets.push(pool.splice(ri, 1)[0]);
+    }
+
+    const targetSet = new Set(targets);
+    const cursors = new Array(pickCount).fill(-1);
+    let doneCount = 0;
+    const DURATION = 1500; // ms
+
+    function refreshActive() {
+      document.querySelectorAll('.wall-tile.active').forEach(t => t.classList.remove('active'));
+      cursors.forEach(idx => {
+        if (idx >= 0 && !targetSet.has(idx)) {
+          const t = document.getElementById(`tile-${idx}`);
+          if (t) t.classList.add('active');
+        }
+      });
+    }
+
+    targets.forEach((target, p) => {
+      const allIdx = names.map((_, i) => i);
+      const startTime = Date.now() + p * 60;
+
+      function animate() {
+        const elapsed = Date.now() - startTime;
+        const progress = elapsed / DURATION;
+
+        if (progress < 1) {
+          const pool2 = allIdx.filter(i => i !== cursors[p]);
+          cursors[p] = pool2[Math.floor(Math.random() * pool2.length)];
+          refreshActive();
+          const delay = 40 + Math.pow(progress, 2) * 360;
+          setTimeout(animate, delay);
+        } else {
+          cursors[p] = -1;
+          refreshActive();
+          const tile = document.getElementById(`tile-${target}`);
+          if (tile) tile.classList.add('winner');
+          doneCount++;
+          if (doneCount === pickCount) {
+            picking = false;
+            document.getElementById('pickBtn').disabled = false;
+            setTimeout(() => showWinners(targets.map(i => names[i])), 600);
+          }
+        }
+      }
+
+      setTimeout(animate, p * 60);
+    });
+  }
+
+  // ── WINNERS ──
+  let lastWinnerNames = [];
+
+  function showWinners(winners) {
+    lastWinnerNames = winners;
+    const list = document.getElementById('winnerList');
+    list.innerHTML = '';
+    winners.forEach((name, i) => {
+      const div = document.createElement('div');
+      div.className = 'winner-item';
+      div.textContent = (winners.length > 1 ? `${i + 1}. ` : '') + name;
+      list.appendChild(div);
+    });
+    document.getElementById('winnerOverlay').classList.add('active');
+    playWin();
+    launchConfetti();
+  }
+
+  function hapusWinner() {
+    document.getElementById('winnerOverlay').classList.remove('active');
+    names = names.filter(n => !lastWinnerNames.includes(n));
+    document.getElementById('nameTextarea').value = names.join('\n');
+    document.getElementById('countBar').innerHTML = `<span>${names.length}</span> nama terdaftar`;
+    renderNameList();
+    renderWall();
+    lastWinnerNames = [];
+  }
+
+  function tutupWinner() {
+    document.getElementById('winnerOverlay').classList.remove('active');
+    // Remove winner highlight from grid
+    document.querySelectorAll('.wall-tile').forEach(t => t.classList.remove('winner', 'active'));
+    lastWinnerNames = [];
+  }
+
+  // ── CONFETTI ──
+  function launchConfetti() {
+    const colors = ['#DAA628','#EFC719','#2F6C3F','#347645','#fff','#ffe066','#7ee8a2'];
+    const container = document.getElementById('confettiContainer');
+    for (let i = 0; i < 130; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'confetti-piece';
+        el.style.left = Math.random() * 100 + '%';
+        el.style.background = colors[Math.floor(Math.random() * colors.length)];
+        el.style.width  = (6 + Math.random() * 10) + 'px';
+        el.style.height = (8 + Math.random() * 14) + 'px';
+        el.style.borderRadius = Math.random() > .5 ? '50%' : '2px';
+        el.style.animationDuration = (2.5 + Math.random() * 3) + 's';
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 6000);
+      }, i * 20);
+    }
+  }
+
+  // ── FULLSCREEN ──
+  function toggleFullscreen() {
+    const el = document.getElementById('wallArea');
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    if (!isFs) {
+      (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    }
+  }
+
+  document.addEventListener('fullscreenchange', updateFsBtn);
+  document.addEventListener('webkitfullscreenchange', updateFsBtn);
+  function updateFsBtn() {
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    const btn = document.getElementById('fsBtn');
+    btn.innerHTML = isFs
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>Keluar Fullscreen`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>Fullscreen`;
+  }
+
+  // ── PICK COUNT ──
+  function changePickCount(delta) {
+    pickCount = Math.max(1, Math.min(5, pickCount + delta));
+    document.getElementById('pickDisplay').textContent = pickCount;
+    document.getElementById('btnMinus').disabled = pickCount <= 1;
+    document.getElementById('btnPlus').disabled = pickCount >= 5;
+  }
+
+  // ── NAMES ──
+  function syncNames() {
+    const ta = document.getElementById('nameTextarea');
+    names = ta.value.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    document.getElementById('countBar').innerHTML = `<span>${names.length}</span> nama terdaftar`;
+    renderNameList();
+    renderWall();
+  }
+
+  function renderNameList() {
+    const container = document.getElementById('nameList');
+    container.innerHTML = '';
+    names.forEach((name, i) => {
+      const div = document.createElement('div');
+      div.className = 'name-tag';
+      div.innerHTML = `
+        <span class="name-tag-num">${i + 1}</span>
+        <span class="name-tag-text">${escHtml(name)}</span>
+        <button class="name-tag-del" title="Hapus" onclick="removeName(${i})">✕</button>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function removeName(i) {
+    names.splice(i, 1);
+    document.getElementById('nameTextarea').value = names.join('\n');
+    document.getElementById('countBar').innerHTML = `<span>${names.length}</span> nama terdaftar`;
+    renderNameList();
+    renderWall();
+  }
+
+  function clearAll() {
+    if (names.length === 0) return;
+    if (!confirm('Hapus semua nama?')) return;
+    names = [];
+    document.getElementById('nameTextarea').value = '';
+    document.getElementById('countBar').innerHTML = `<span>0</span> nama terdaftar`;
+    renderNameList();
+    renderWall();
+  }
+
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // ── TOAST ──
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  // ── INIT ──
+  changePickCount(0);
+</script>
+</body>
+</html>
