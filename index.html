@@ -376,12 +376,23 @@
     #map-jateng{height:520px;width:100%;border-radius:6px}
     .leaflet-container{font-family:var(--font-b)}
     .ppk-pin-icon{background:none!important;border:none!important}
+    .map-legend{display:flex;justify-content:center;gap:28px;margin-top:16px}
+    .map-legend-item{display:flex;align-items:center;gap:8px;font-family:var(--font-j);font-weight:700;font-size:.78rem;color:var(--hijau-tua);text-transform:uppercase;letter-spacing:.04em}
+    .map-legend .dot{width:14px;height:14px;border-radius:50%;display:inline-block;border:1.5px solid #0F261F}
+    .map-legend .dot-ppk{background:#2F6C3F}
+    .map-legend .dot-gudang{background:#B3261E}
     #ppk-popup{
       position:fixed;z-index:9999;background:var(--putih);
       border-radius:8px;box-shadow:0 12px 48px rgba(0,0,0,.28),0 0 0 2px var(--emas);
       padding:18px 16px 16px;width:220px;display:none;
       border-top:3px solid var(--emas);
     }
+    #ppk-popup.ppk-popup-gudang{
+      border-top:3px solid #B3261E;
+      box-shadow:0 12px 48px rgba(0,0,0,.28),0 0 0 2px #B3261E;
+    }
+    #ppk-popup.ppk-popup-gudang .ppk-kab-label{color:#B3261E}
+    #ppk-popup.ppk-popup-gudang .ppk-foto-wrap{border-color:#B3261E}
     .ppk-close{
       position:absolute;top:7px;right:8px;
       background:none;border:none;cursor:pointer;
@@ -700,7 +711,7 @@
       <div class="tl-item reveal">
         <div></div>
         <div class="tl-ctr"><div class="tl-dot"></div></div>
-        <div class="tl-right"><div class="tl-date">19 September 2000</div><div class="tl-ev">Sertifikasi ISO 9001:2015</div><div class="tl-desc">Memperoleh sertifikat ISO 9001:2015 dari SGS Indonesia serta memenuhi SNI.</div></div>
+        <div class="tl-right"><div class="tl-date">19 September 2000</div><div class="tl-ev">Sertifikasi ISO 9001</div><div class="tl-desc">Memperoleh sertifikat ISO 9001 dari SGS Indonesia serta memenuhi SNI.</div></div>
       </div>
       <div class="tl-item reveal">
         <div class="tl-left"><div class="tl-date">24 Oktober 2018</div><div class="tl-ev">Kantor Pusat Baru</div><div class="tl-desc">GCS menempati kantor pusat baru di Kawasan Industri Gresik (KIG) Jl. KIG Raya Selatan Blok A5 hingga saat ini.</div></div>
@@ -966,22 +977,24 @@
     <div class="manajemen-sec-label reveal"><h4>GENERAL MANAGER</h4></div>
     <div class="manajemen-row">
       <div class="mgmt-card reveal-scale">
-        <div class="mgmt-avatar" style="background:rgba(218,166,40,.1);border-color:rgba(218,166,40,.4)">
-          <img src="gm1.png" alt="M. Armi Kurnia" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+        <div class="mgmt-avatar">
+          <img src="gm1.png" alt="Abdul Rahman" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="avatar-svg" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
         </div>
         <div class="mgmt-name">Abdul Rahman</div>
         <div class="mgmt-jabatan">KOMPARTEMEN PENJUALAN KORPORASI</div>
       </div>
-            <div class="mgmt-card reveal-scale">
-        <div class="mgmt-avatar" style="background:rgba(218,166,40,.1);border-color:rgba(218,166,40,.4)">
-          <img src="gm3.png" alt="M. Armi Kurnia" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+      <div class="mgmt-card reveal-scale">
+        <div class="mgmt-avatar">
+          <img src="gm3.png" alt="Widodo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="avatar-svg" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
         </div>
         <div class="mgmt-name">Widodo</div>
         <div class="mgmt-jabatan">KOMPARTEMEN PENJUALAN RETAIL</div>
       </div>
       <div class="mgmt-card reveal-scale" style="transition-delay:.15s">
         <div class="mgmt-avatar">
-          <img src="gm4.png" alt="M. Armi Kurnia" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <img src="gm4.png" alt="M. Faisal Alfarokhi" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
           <div class="avatar-svg" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
         </div>
         <div class="mgmt-name">M. Faisal Alfarokhi</div>
@@ -989,7 +1002,7 @@
       </div>
       <div class="mgmt-card reveal-scale" style="transition-delay:.3s">
         <div class="mgmt-avatar">
-          <img src="gm2.png" alt="Nugroho Iman Prakosa" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <img src="gm2.png" alt="Achmad Wahyudi" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
           <div class="avatar-svg" style="display:none"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>
         </div>
         <div class="mgmt-name">Achmad Wahyudi</div>
@@ -1083,12 +1096,16 @@
 <section id="peta" class="section-pad">
   <div class="container">
     <div style="text-align:center;margin-bottom:50px" class="reveal">
-      <span class="section-label">Distribusi PPK</span>
+      <span class="section-label">Distribusi PPK DAN GUDANG</span>
       <h2 class="section-title">Jaringan <span>Pemasaran</span></h2>
       <div class="section-line center"></div>
     </div>
     <div class="reveal" style="border-radius:6px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.12)">
       <div id="map-jateng"></div>
+    </div>
+    <div class="map-legend reveal">
+      <span class="map-legend-item"><span class="dot dot-ppk"></span>PPK</span>
+      <span class="map-legend-item"><span class="dot dot-gudang"></span>Gudang</span>
     </div>
   </div>
 </section>
@@ -1267,6 +1284,21 @@
     'Konawe Selatan':       { nama: 'Suci Rahmadani',         kabupaten: 'Kab. Konawe Selatan',         telepon: '+62 822-4136-0586', foto: 'foto-ppk/suci-konaweselatan.jpeg' },
   };
 
+  /* ── DATA GUDANG ── */
+  const gudangData = {
+    'GD Bengkulu IV': { nama: 'Hendra Saputra',     kabupaten: 'GD Bengkulu IV', telepon: '+62 822-8091-8341', foto: 'foto-ppk/gudang1.jpeg', isGudang: true },
+    'GP Bandar Jaya':  { nama: 'Helmi',              kabupaten: 'GP Bandar Jaya',  telepon: '+62 821-8335-0066', foto: 'foto-ppk/gudang2.jpeg', isGudang: true },
+    'GP Kotabumi':     { nama: 'Rizki Darma Santoso', kabupaten: 'GP Kotabumi',    telepon: '+62 821-6818-0207', foto: 'foto-ppk/gudang3.jpeg', isGudang: true },
+    'GPP Bengkulu':    { nama: 'Rizki Triwibowo',    kabupaten: 'GPP Bengkulu',    telepon: '+62 822-8091-8341', foto: 'foto-ppk/gudang4.jpeg', isGudang: true },
+  };
+
+  const gudangPoints = [
+    { latlng: [-3.7928, 102.2608], name: 'GD Bengkulu IV' },
+    { latlng: [-4.8169, 105.1167], name: 'GP Bandar Jaya' },
+    { latlng: [-4.8493, 104.9036], name: 'GP Kotabumi' },
+    { latlng: [-3.8624, 102.3461], name: 'GPP Bengkulu' },
+  ];
+
   const mapJateng = L.map('map-jateng', { zoomControl: true })
     .setView([-2.5, 110], 5);
 
@@ -1309,6 +1341,7 @@
   }
 
   function showPPK(data, clientX, clientY) {
+    popup.classList.toggle('ppk-popup-gudang', !!data.isGudang);
     const fotoEl = document.getElementById('ppk-foto');
     const wrapEl = fotoEl.closest('.ppk-foto-wrap');
     if (data.foto) {
@@ -1398,6 +1431,24 @@
       },
       mouseout: function() {
         marker.setIcon(createPinIcon('#2F6C3F'));
+        scheduleHide();
+      }
+    });
+  });
+
+  // Marker Gudang (merah)
+  gudangPoints.forEach(function(m) {
+    const data = gudangData[m.name];
+    const marker = L.marker(m.latlng, { icon: createPinIcon('#B3261E'), zIndexOffset: 500 }).addTo(mapJateng);
+
+    marker.on({
+      mouseover: function(e) {
+        cancelHide();
+        marker.setIcon(createPinIcon('#F2A39B'));
+        if (data) showPPK(data, e.originalEvent.clientX, e.originalEvent.clientY);
+      },
+      mouseout: function() {
+        marker.setIcon(createPinIcon('#B3261E'));
         scheduleHide();
       }
     });

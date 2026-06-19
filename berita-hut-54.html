@@ -45,12 +45,10 @@
     .kesan-card span{display:block;font-family:var(--font-j);font-weight:800;font-size:.74rem;color:var(--hijau-tua);text-transform:uppercase;letter-spacing:.04em}
     .lightbox{display:none;position:fixed;inset:0;background:rgba(10,26,19,.92);z-index:9999;align-items:center;justify-content:center;padding:30px;cursor:zoom-out}
     .lightbox.open{display:flex}
-    .lightbox-box{background:var(--putih);border-radius:8px;overflow:hidden;max-width:420px;width:100%;cursor:default;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-    .lb-icon{width:100%;height:200px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--hijau-tua),#193a2c)}
-    .lb-icon svg{width:60px;height:60px;stroke:var(--emas)}
-    .lightbox-caption{padding:20px 22px}
-    .lightbox-caption p{font-size:.86rem;color:#4a5a50;line-height:1.7;font-style:italic;margin-bottom:10px}
-    .lightbox-caption span{display:block;font-family:var(--font-j);font-weight:800;font-size:.78rem;color:var(--hijau-tua);text-transform:uppercase;letter-spacing:.04em}
+    .lightbox-box{background:var(--putih);border-radius:8px;overflow:hidden;max-width:600px;width:100%;cursor:default;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+    .lb-photo{width:100%;display:block;background:var(--abu)}
+    .lightbox-caption{padding:16px 22px;text-align:center}
+    .lightbox-caption span{display:block;font-family:var(--font-j);font-weight:800;font-size:.82rem;color:var(--hijau-tua);text-transform:uppercase;letter-spacing:.04em}
     .lightbox-close{position:absolute;top:20px;right:28px;color:#fff;font-size:2.2rem;font-weight:300;cursor:pointer;line-height:1;opacity:.8;transition:opacity .2s}
     .lightbox-close:hover{opacity:1}
     footer{background:#070f0b;padding:22px 32px;text-align:center;font-size:.73rem;color:rgba(255,255,255,.3)}
@@ -86,38 +84,37 @@
       <div class="gallery-photo"><img src="hut/upacara2.JPG" alt="Upacara HUT ke-54 PT GCS - barisan petugas di halaman kantor" loading="lazy"></div>
       <div class="gallery-photo"><img src="hut/upacara3.JPG" alt="Upacara bendera HUT ke-54 PT GCS - prosesi pengibaran bendera" loading="lazy"></div>
       <div class="gallery-photo"><img src="hut/upacara4.JPG" alt="Upacara bendera HUT ke-54 PT GCS - sambutan pimpinan" loading="lazy"></div>
-      <div class="gallery-photo"><img src="hut/hut1.JPG" alt="Acara syukuran HUT ke-54 PT GCS - pemotongan tumpeng oleh jajaran direksi" loading="lazy"></div>
+      <div class="gallery-photo"><img src="hut/hut5.jpeg" alt="Acara syukuran HUT ke-54 PT GCS - pemotongan tumpeng oleh jajaran direksi" loading="lazy"></div>
       <div class="gallery-photo"><img src="hut/hut2.JPG" alt="Acara syukuran HUT ke-54 PT GCS - foto bersama jajaran manajemen" loading="lazy"></div>
-      <div class="gallery-photo"><img src="hut/hut3.JPG" alt="Acara syukuran HUT ke-54 PT GCS - foto bersama karyawan dan mitra" loading="lazy"></div>
+      <div class="gallery-photo"><img src="hut/hut1.jpg" alt="Acara syukuran HUT ke-54 PT GCS - foto bersama karyawan dan mitra" loading="lazy"></div>
       <div class="gallery-photo"><img src="hut/hut4.JPG" alt="Acara syukuran HUT ke-54 PT GCS - penyerahan hadiah lomba persahabatan" loading="lazy"></div>
     </div>
 
     <div class="gallery-title">Kesan &amp; Pesan</div>
-    <p class="kesan-hint">Klik kartu untuk melihat pesan lengkap.</p>
+    <p class="kesan-hint">Klik kartu untuk melihat foto kesan &amp; pesan.</p>
     <div class="kesan-grid">
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Istokri"><p>Selamat ulang tahun ke-54. Makin maju dan bermanfaat untuk lestari.</p><span>Istokri</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Eko Suroso"><p>Selamat ulang tahun yang ke-54 untuk PT Gresik Cipta Sejahtera. Semoga semakin kokoh, solid, tumbuh, dan berkembang serta jaya selalu.</p><span>Eko Suroso</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Joko Utomo"><p>Selamat ulang tahun yang ke-54 PT Gresik Cipta Sejahtera.<br>&bull; Maju semakin pesat<br>&bull; Bersama kita bisa<br>PT GCS jaya selamanya.</p><span>Joko Utomo</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Awang Johan B."><p>Selamat ulang tahun ke-54 PT GCS. Semoga tambah berkembang &amp; melesat lebih jauh.</p><span>Awang Johan B.</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Muhammad Taufik"><p>Selamat ulang tahun ke-54 PT GCS. Semoga makin jaya, amin.</p><span>Muhammad Taufik</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Andy Setiadi"><p>Selamat ulang tahun ke-54 PT GCS. Semoga sukses selalu, terus berkembang dan melangkah lebih jauh. Salam.</p><span>Andy Setiadi</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Agus Pramono"><p>Maju terus GCS, melesat lebih jauuuh! Selamat ulang tahun ke-54.</p><span>Agus Pramono</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Agung S."><p>Selamat ulang tahun GCS. Sukses, jaya selalu, karyawan sejahtera, pensiunan bahagia, aamiin.</p><span>Agung S.</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Joko Margono"><p>Selamat ulang tahun GCS ke-54. Semoga semakin maju dan melesat, aamiin.</p><span>Joko Margono</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Koeshartono"><p>Selamat ulang tahun PT Gresik Cipta Sejahtera yang ke-54. Semoga PT GCS makin tumbuh dan berkembang pada masa-masa mendatang. Saya yakin dengan kondisi perekonomian dunia, PT GCS tetap bisa mengembangkan bisnisnya dengan inovasi-inovasi agar perusahaan tetap eksis dan tumbuh berkembang. Harapan saya, karyawan semakin sejahtera. Wassalam.</p><span>Koeshartono</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Daniel"><p>Selamat hari jadi PT Gresik Cipta Sejahtera. Semoga sukses selalu, semakin jaya, unggul dalam pelayanan, dan terus menjadi mitra terbaik yang membawa berkah serta kemajuan bersama.</p><span>Daniel</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Bambang"><p>Semoga GCS semakin jaya &amp; memberikan sumbangsih untuk semua.</p><span>Bambang</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Wisma B."><p>Selamat HUT GCS, sukses selalu.</p><span>Wisma B.</span></div>
-      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Gede Agung"><p>Tiada yang lebih membanggakan bertemu dengan saudara dan kawan-kawan lama, kawan seperjuangan yang masih sehat dan bahagia apa adanya. Puji Tuhan, semoga bertemu lagi dalam kesempatan lain di tempat lain. Semoga! Selamat dan sukses untuk GCS, untuk kawan-kawan karyawan semua.</p><span>Gede Agung</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Istochri Utomo" data-img="impresi/kesan-01.jpg"><p>Selamat ulang tahun ke-54. Makin maju dan bermanfaat untuk lestari.</p><span>Istochri Utomo</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Eko Suroso" data-img="impresi/kesan-02.jpg"><p>Selamat ulang tahun yang ke-54 untuk PT Gresik Cipta Sejahtera. Semoga semakin kokoh, solid, tumbuh, dan berkembang serta jaya selalu.</p><span>Eko Suroso</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Joko Utomo" data-img="impresi/kesan-03.jpg"><p>Selamat ulang tahun yang ke-54 PT Gresik Cipta Sejahtera.<br>&bull; Maju semakin pesat<br>&bull; Bersama kita bisa<br>PT GCS jaya selamanya.</p><span>Joko Utomo</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Awang Djohan B." data-img="impresi/kesan-04.jpg"><p>Selamat ulang tahun ke-54 PT GCS. Semoga tambah berkembang &amp; melesat lebih jauh.</p><span>Awang Djohan B.</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Muhammad Taufik" data-img="impresi/kesan-05.jpg"><p>Selamat ulang tahun ke-54 PT GCS. Semoga makin jaya, amin.</p><span>Muhammad Taufik</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Andy Setiadi" data-img="impresi/kesan-06.jpg"><p>Selamat ulang tahun ke-54 PT GCS. Semoga sukses selalu, terus berkembang dan melangkah lebih jauh. Salam.</p><span>Andy Setiadi</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Agus Pramono" data-img="impresi/kesan-07.jpg"><p>Maju terus GCS, melesat lebih jauuuh! Selamat ulang tahun ke-54.</p><span>Agus Pramono</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Agung Setiya Budhi" data-img="impresi/kesan-08.jpg"><p>Selamat ulang tahun GCS. Sukses, jaya selalu, karyawan sejahtera, pensiunan bahagia, aamiin.</p><span>Agung Setiya Budhi</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Joko Margono" data-img="impresi/kesan-09.jpg"><p>Selamat ulang tahun GCS ke-54. Semoga semakin maju dan melesat, aamiin.</p><span>Joko Margono</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Koeshartono" data-img="impresi/kesan-10.jpg"><p>Selamat ulang tahun PT Gresik Cipta Sejahtera yang ke-54. Semoga PT GCS makin tumbuh dan berkembang pada masa-masa mendatang. Saya yakin dengan kondisi perekonomian dunia, PT GCS tetap bisa mengembangkan bisnisnya dengan inovasi-inovasi agar perusahaan tetap eksis dan tumbuh berkembang. Harapan saya, karyawan semakin sejahtera. Wassalam.</p><span>Koeshartono</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="David Mundovi" data-img="impresi/kesan-11.jpg"><p>Selamat hari jadi PT Gresik Cipta Sejahtera. Semoga sukses selalu, semakin jaya, unggul dalam pelayanan, dan terus menjadi mitra terbaik yang membawa berkah serta kemajuan bersama.</p><span>David Mundovi</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Bambang Ariwibowo" data-img="impresi/kesan-12.jpg"><p>Semoga GCS semakin jaya &amp; memberikan sumbangsih untuk semua.</p><span>Bambang Ariwibowo</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="Wismo Budiono" data-img="impresi/kesan-13.jpg"><p>Selamat HUT GCS, sukses selalu.</p><span>Wismo Budiono</span></div>
+      <div class="kesan-card" onclick="openKesanLightbox(this)" data-name="A.A. Gede Agung" data-img="impresi/kesan-14.jpg"><p>Tiada yang lebih membanggakan bertemu dengan saudara dan kawan-kawan lama, kawan seperjuangan yang masih sehat dan bahagia apa adanya. Puji Tuhan, semoga bertemu lagi dalam kesempatan lain di tempat lain. Semoga! Selamat dan sukses untuk GCS, untuk kawan-kawan karyawan semua.</p><span>A.A. Gede Agung</span></div>
     </div>
   </div>
 
   <div id="lightbox" class="lightbox" onclick="closeLightbox(event)">
     <span class="lightbox-close" onclick="closeLightbox(event)">&times;</span>
     <div class="lightbox-box">
-      <div class="lb-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+      <img id="lb-photo" class="lb-photo" src="" alt="" />
       <div class="lightbox-caption">
-        <p id="lb-quote"></p>
         <span id="lb-name"></span>
       </div>
     </div>
@@ -128,7 +125,9 @@
   <script>
     function openKesanLightbox(card) {
       document.getElementById('lb-name').textContent = card.dataset.name;
-      document.getElementById('lb-quote').innerHTML = card.querySelector('p').innerHTML;
+      const photo = document.getElementById('lb-photo');
+      photo.src = card.dataset.img;
+      photo.alt = 'Kesan & pesan dari ' + card.dataset.name;
       document.getElementById('lightbox').classList.add('open');
     }
     function closeLightbox(e) {
