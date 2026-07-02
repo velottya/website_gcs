@@ -1,0 +1,5 @@
+# Kredensial database - JANGAN pernah dikomit
+config.php
+
+# Berkas hasil unggahan pengguna (KTP, ijazah, dsb.)
+/uploads/
