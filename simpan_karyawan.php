@@ -71,25 +71,35 @@ if (!is_dir($uploadDir)) {
 
 $savedFiles = [];
 
-function store_upload(string $inputName, array $allowedExt, int $maxSize, string $uploadDir, array &$savedFiles): ?string {
+// Bersihkan teks agar aman dipakai sebagai nama file (buang karakter terlarang, rapikan spasi).
+function sanitize_filename(string $s): string {
+    $s = preg_replace('/[^A-Za-z0-9 _.-]/', '', $s);
+    $s = trim(preg_replace('/\s+/', ' ', $s));
+    return $s === '' ? 'file' : $s;
+}
+
+/**
+ * Simpan berkas unggahan dengan nama "IDKaryawan_NamaDokumen.ext" (mis. 123_KTP.jpg).
+ */
+function store_upload(string $inputName, string $idKaryawan, string $docLabel, array $allowedExt, int $maxSize, string $uploadDir, array &$savedFiles): ?string {
     if (empty($_FILES[$inputName]) || $_FILES[$inputName]['error'] === UPLOAD_ERR_NO_FILE) {
         return null;
     }
     $file = $_FILES[$inputName];
     if ($file['error'] !== UPLOAD_ERR_OK) {
-        throw new RuntimeException("Gagal mengunggah berkas ({$inputName}).");
+        throw new RuntimeException("Gagal mengunggah berkas ({$docLabel}).");
     }
     if ($file['size'] > $maxSize) {
-        throw new RuntimeException("Ukuran berkas ({$inputName}) melebihi 5MB.");
+        throw new RuntimeException("Ukuran berkas ({$docLabel}) melebihi 5MB.");
     }
     $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     if (!in_array($ext, $allowedExt, true)) {
-        throw new RuntimeException("Format berkas ({$inputName}) tidak didukung.");
+        throw new RuntimeException("Format berkas ({$docLabel}) tidak didukung.");
     }
-    $storedName = bin2hex(random_bytes(16)) . '.' . $ext;
+    $storedName = sanitize_filename($idKaryawan . '_' . $docLabel) . '.' . $ext;
     $destination = $uploadDir . $storedName;
     if (!move_uploaded_file($file['tmp_name'], $destination)) {
-        throw new RuntimeException("Gagal menyimpan berkas ({$inputName}).");
+        throw new RuntimeException("Gagal menyimpan berkas ({$docLabel}).");
     }
     $savedFiles[] = $destination;
     return 'uploads/karyawan/' . $storedName;
@@ -111,17 +121,18 @@ try {
         ]);
     }
 
-    $fileKtp = store_upload('ktp', $allowedExt, $maxSize, $uploadDir, $savedFiles);
-    $fileIjazah = store_upload('ijazah', $allowedExt, $maxSize, $uploadDir, $savedFiles);
-    $fileBukuNikah = store_upload('buku_nikah', $allowedExt, $maxSize, $uploadDir, $savedFiles);
-    $fileKk = store_upload('kk', $allowedExt, $maxSize, $uploadDir, $savedFiles);
-    $fileSim = store_upload('sim', $allowedExt, $maxSize, $uploadDir, $savedFiles);
-    $fileGadaPratama = store_upload('gada_pratama', $allowedExt, $maxSize, $uploadDir, $savedFiles);
-    $fileK3 = store_upload('k3', $allowedExt, $maxSize, $uploadDir, $savedFiles);
+    $idKaryawan = trim((string)$_POST['id_karyawan']);
+    $fileKtp = store_upload('ktp', $idKaryawan, 'KTP', $allowedExt, $maxSize, $uploadDir, $savedFiles);
+    $fileIjazah = store_upload('ijazah', $idKaryawan, 'Ijazah', $allowedExt, $maxSize, $uploadDir, $savedFiles);
+    $fileBukuNikah = store_upload('buku_nikah', $idKaryawan, 'Buku Nikah', $allowedExt, $maxSize, $uploadDir, $savedFiles);
+    $fileKk = store_upload('kk', $idKaryawan, 'KK', $allowedExt, $maxSize, $uploadDir, $savedFiles);
+    $fileSim = store_upload('sim', $idKaryawan, 'SIM', $allowedExt, $maxSize, $uploadDir, $savedFiles);
+    $fileGadaPratama = store_upload('gada_pratama', $idKaryawan, 'Gada Pratama', $allowedExt, $maxSize, $uploadDir, $savedFiles);
+    $fileK3 = store_upload('k3', $idKaryawan, 'K3', $allowedExt, $maxSize, $uploadDir, $savedFiles);
 
     $childFiles = [];
     for ($i = 1; $i <= $jumlahAnak; $i++) {
-        $childFiles[$i] = store_upload("anak{$i}_akta", $allowedExt, $maxSize, $uploadDir, $savedFiles);
+        $childFiles[$i] = store_upload("anak{$i}_akta", $idKaryawan, "Akta Anak {$i}", $allowedExt, $maxSize, $uploadDir, $savedFiles);
     }
 
     $pdo->beginTransaction();

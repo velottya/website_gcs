@@ -27,7 +27,7 @@ File `web.config` (root) dan `uploads/karyawan/web.config` sudah disiapkan di da
 | `db.php` | Koneksi + helper | TIDAK (diblokir web.config) |
 | `database/*.sql` | Skrip setup DB | TIDAK (diblokir web.config) |
 | `*.md`, `.htaccess`, `config.example.php` | Dokumen/contoh | TIDAK (diblokir web.config) |
-| `uploads/karyawan/` | Berkas unggahan | Read-only, **tidak boleh eksekusi skrip** (web.config) |
+| `uploads/karyawan/` | Berkas unggahan (nama `IDKaryawan_Dokumen.ext`) | **TIDAK sama sekali** — akses browser diblokir; hanya bisa dibuka dari server (filesystem/RDP) |
 
 ---
 
@@ -92,7 +92,9 @@ Pakai **PHP Manager for IIS** (Register new PHP version), atau IIS Manager → *
 
 1. Salin seluruh isi folder ke server, mis. `C:\inetpub\wwwroot\gcs`.
 2. IIS Manager → tambah **Website** baru (punya domain/port sendiri) atau **Application** di bawah Default Web Site.
-3. `web.config` bawaan otomatis dipakai: dokumen default, batas unggah 50MB, blokir `config.php`/`db.php`/`database`/`.sql`/`.md`, dan proteksi eksekusi di `uploads/karyawan`.
+3. `web.config` bawaan otomatis dipakai: dokumen default, batas unggah 50MB, blokir `config.php`/`db.php`/`database`/`.sql`/`.md`, blokir total akses URL ke folder `uploads`, dan proteksi eksekusi skrip di `uploads/karyawan`.
+
+> **Akses berkas lampiran:** file KTP/KK/dll **tidak bisa dibuka lewat browser sama sekali** (mis. `/gcs/uploads/karyawan/123_KTP.png` → 404/403). Berkas hanya bisa dibuka **langsung dari server** (File Explorer / RDP) di folder `...\uploads\karyawan`. Untuk blokir ini, IIS butuh peran **Request Filtering** aktif (Langkah 1).
 
 > Catatan: `config.php` berisi password DB. Jika Anda menyalin dari lingkungan lain, **tinjau ulang** isinya (lihat Langkah 7). Jangan pernah commit `config.php` ke git (sudah di `.gitignore`).
 
