@@ -1,144 +1,173 @@
-# Panduan Deploy `website_gcs` ke IIS
+# Panduan Deploy `website_gcs` (Form Data Karyawan) ke IIS
 
-Dokumen ini menjelaskan cara men-deploy folder ini ke server **IIS** perusahaan.
-File `web.config` (root) dan `uploads/karyawan/web.config` sudah disiapkan di dalam folder ini.
+Panduan lengkap men-deploy aplikasi ini ke server **IIS** perusahaan.
+File `web.config` (root) dan `uploads/karyawan/web.config` sudah disiapkan di dalam folder — ikut disalin apa adanya.
 
-> ⚠️ **Penting:** Form ini mengumpulkan **data pribadi sensitif** (NIK, KTP, KK, ijazah, akta anak).
-> Deploy sebaiknya sebagai **aplikasi internal (intranet, di belakang login)**, bukan situs publik terbuka.
-> Jika tetap online, WAJIB pakai **HTTPS** + **user DB terbatas** (bukan `sa`) + kontrol akses.
-
----
-
-## Ringkasan yang harus disiapkan di server IIS
-
-| # | Kebutuhan | Kenapa |
-|---|-----------|--------|
-| 1 | IIS + peran CGI | Untuk menjalankan PHP via FastCGI |
-| 2 | PHP (versi NTS/x64) | IIS menjalankan PHP mode Non-Thread-Safe |
-| 3 | Driver `php_pdo_sqlsrv` + `php_sqlsrv` (cocok versi PHP) | Agar PHP bisa konek SQL Server |
-| 4 | ODBC Driver 17/18 for SQL Server | Dependensi driver di atas |
-| 5 | Handler mapping `*.php` → FastCGI | Agar `simpan_karyawan.php` tereksekusi |
-| 6 | Izin tulis folder `uploads/karyawan` | Agar unggahan berkas berhasil |
-| 7 | Koneksi jaringan ke SQL Server | `config.php` harus bisa menjangkau DB |
-| 8 | Sertifikat HTTPS | Melindungi data pribadi saat dikirim |
+> ⚠️ **Penting:** Aplikasi ini mengumpulkan **data pribadi sensitif** (NIK, KTP, KK, ijazah, akta anak) dan
+> punya **login**. Deploy sebaiknya sebagai **aplikasi internal (intranet)**. Jika online, **WAJIB HTTPS**
+> + **user DB terbatas** (bukan `sa`) + `display_errors=Off`.
 
 ---
 
-## Langkah 1 — Aktifkan IIS + CGI
+## 0. Gambaran aplikasi (apa yang di-deploy)
 
-Server Manager → **Add Roles and Features** → **Web Server (IIS)**, pastikan tercentang:
-- **Web Server → Application Development → CGI**
-- **Web Server → Common HTTP Features → Static Content, Default Document**
-- **Web Server → Security → Request Filtering**
+- **Entry point: `login.php`** — user login pakai akun MyGCS (`email` atau `user_easy`) dari tabel `GCS.easy.users` (password bcrypt, hanya `status='Aktif'`).
+- Setelah login → **`form_data_karyawan_gcs.php`** (form utama, responsif/mobile-friendly).
+- Form kirim data (AJAX) ke **`simpan_karyawan.php`** → INSERT ke `GCS.dbo.MST_PEGAWAI` (+ anak ke `MST_ANAK_PEGAWAI`). Lampiran disimpan di `uploads/karyawan/`, path-nya di DB.
+- **`cek_duplikat.php`** — deteksi NIK / ID Karyawan ganda secara real-time & saat submit.
+- **`logout.php`** — akhiri sesi. Login butuh **PHP session** (perlu folder session yang writable).
 
-(Atau via PowerShell admin:)
+### File & folder penting
+| Item | Fungsi | Boleh diakses publik? |
+|------|--------|-----------------------|
+| `login.php`, `logout.php`, `auth.php` | Autentikasi & sesi | `login`/`logout` ya; `auth.php` hanya di-include |
+| `form_data_karyawan_gcs.php` | Form utama (butuh login) | Ya (setelah login) |
+| `simpan_karyawan.php`, `cek_duplikat.php` | Endpoint data (butuh login) | Ya (dipanggil form) |
+| `config.php` | **Kredensial DB** | **TIDAK** (diblokir web.config) |
+| `db.php` | Koneksi + helper | TIDAK (diblokir web.config) |
+| `database/*.sql` | Skrip setup DB | TIDAK (diblokir web.config) |
+| `*.md`, `.htaccess`, `config.example.php` | Dokumen/contoh | TIDAK (diblokir web.config) |
+| `uploads/karyawan/` | Berkas unggahan | Read-only, **tidak boleh eksekusi skrip** (web.config) |
+
+---
+
+## 1. Aktifkan IIS + CGI
+
+Server Manager → **Add Roles and Features** → **Web Server (IIS)**, centang:
+- **Application Development → CGI**
+- **Common HTTP Features → Static Content, Default Document**
+- **Security → Request Filtering**
+
+Atau via PowerShell (admin):
 ```powershell
 Enable-WindowsOptionalFeature -Online -FeatureName IIS-CGI, IIS-WebServerRole, IIS-StaticContent, IIS-DefaultDocument, IIS-RequestFiltering
 ```
 
-## Langkah 2 — Pasang PHP untuk IIS
+## 2. Pasang PHP (Non-Thread-Safe)
 
-Cara termudah: **Web Platform Installer** → cari "PHP" → install (mis. PHP 8.2 **Non-Thread-Safe**).
-Atau manual: unduh PHP NTS x64 dari windows.php.net, ekstrak ke mis. `C:\PHP`, salin `php.ini-production` → `php.ini`.
+Termudah: **Web Platform Installer** → cari "PHP" → install **PHP 8.2 NTS**.
+Manual: unduh PHP **NTS x64** dari windows.php.net → ekstrak ke `C:\PHP` → salin `php.ini-production` menjadi `php.ini`.
 
-Di `php.ini` server, aktifkan minimal:
+Edit `php.ini` (minimal):
 ```ini
 extension_dir = "ext"
 extension=pdo_sqlsrv
 extension=sqlsrv
+
 file_uploads = On
 upload_max_filesize = 5M
-post_max_size = 50M          ; total beberapa lampiran
+post_max_size = 60M          ; total beberapa lampiran @5MB
 max_file_uploads = 20
-display_errors = Off         ; jangan tampilkan error ke publik
+
+display_errors = Off         ; jangan bocorkan error ke publik
+log_errors = On
+
+; Session (dibutuhkan login). Pastikan folder ini ADA & writable oleh App Pool.
+session.save_path = "C:\PHP\sessions"
+session.cookie_httponly = 1
+session.gc_maxlifetime = 7200
 ```
+Buat foldernya: `New-Item -ItemType Directory C:\PHP\sessions` (izin ditur di Langkah 6).
 
-## Langkah 3 — Pasang driver SQL Server untuk PHP
+## 3. Pasang driver SQL Server untuk PHP
 
-1. Unduh **Microsoft Drivers for PHP for SQL Server** yang **cocok dengan versi & arsitektur PHP** (mis. PHP 8.2, x64, **NTS**). Ambil `php_pdo_sqlsrv_82_nts_x64.dll` dan `php_sqlsrv_82_nts_x64.dll`, taruh di folder `ext` PHP.
-2. Unduh & install **ODBC Driver 18 (atau 17) for SQL Server** di server.
+1. Unduh **Microsoft Drivers for PHP for SQL Server** yang **cocok versi & arsitektur** (PHP 8.2, x64, **NTS**). Taruh `php_pdo_sqlsrv_82_nts_x64.dll` & `php_sqlsrv_82_nts_x64.dll` di folder `C:\PHP\ext`.
+2. Install **ODBC Driver 18 (atau 17) for SQL Server** di server.
 3. Verifikasi:
    ```powershell
-   & "C:\PHP\php.exe" -m   # harus muncul: pdo_sqlsrv dan sqlsrv
+   & "C:\PHP\php.exe" -m    # harus memunculkan: pdo_sqlsrv dan sqlsrv
    ```
 
-## Langkah 4 — Daftarkan handler PHP di IIS
+## 4. Daftarkan handler PHP di IIS
 
-Gunakan **PHP Manager for IIS** (register PHP version), atau IIS Manager → **Handler Mappings** → **Add Module Mapping**:
+Pakai **PHP Manager for IIS** (Register new PHP version), atau IIS Manager → **Handler Mappings** → **Add Module Mapping**:
 - Request path: `*.php`
 - Module: `FastCgiModule`
 - Executable: `C:\PHP\php-cgi.exe`
 - Name: `PHP_via_FastCGI`
 
-> Handler ini di tingkat server, jadi **tidak** ditaruh di `web.config` (agar tidak bergantung path).
+> Handler ini di tingkat server, jadi **tidak** ditaruh di `web.config` (agar tak bergantung path server).
 
-## Langkah 5 — Salin folder & buat Site/Application
+## 5. Salin folder & buat Site/Application
 
-1. Salin seluruh isi folder ini ke server, mis. `C:\inetpub\wwwroot\gcs` (atau buat Site tersendiri).
-2. IIS Manager → tambah **Website** atau **Application** yang menunjuk ke folder tersebut.
-3. `web.config` yang sudah ada akan otomatis dipakai (dokumen default, batas unggah 50MB, blokir `config.php`/`db.php`/`database`/`.sql`/`.md`, dan proteksi eksekusi di `uploads/karyawan`).
+1. Salin seluruh isi folder ke server, mis. `C:\inetpub\wwwroot\gcs`.
+2. IIS Manager → tambah **Website** baru (punya domain/port sendiri) atau **Application** di bawah Default Web Site.
+3. `web.config` bawaan otomatis dipakai: dokumen default, batas unggah 50MB, blokir `config.php`/`db.php`/`database`/`.sql`/`.md`, dan proteksi eksekusi di `uploads/karyawan`.
 
-## Langkah 6 — Izin tulis folder uploads
+> Catatan: `config.php` berisi password DB. Jika Anda menyalin dari lingkungan lain, **tinjau ulang** isinya (lihat Langkah 7). Jangan pernah commit `config.php` ke git (sudah di `.gitignore`).
 
-Beri **Application Pool identity** (mis. `IIS AppPool\<NamaAppPool>`) hak **Modify** pada folder `uploads\karyawan`:
+## 6. Izin folder (uploads + session)
+
+Beri **Application Pool identity** hak **Modify** pada folder unggahan **dan** folder session:
 ```powershell
 icacls "C:\inetpub\wwwroot\gcs\uploads\karyawan" /grant "IIS AppPool\DefaultAppPool:(OI)(CI)M"
+icacls "C:\PHP\sessions" /grant "IIS AppPool\DefaultAppPool:(OI)(CI)M"
 ```
-(ganti `DefaultAppPool` dengan nama App Pool site Anda)
+Ganti `DefaultAppPool` dengan nama App Pool site Anda. (Tanpa izin session, login akan gagal menyimpan sesi.)
 
-## Langkah 7 — Sesuaikan `config.php`
+## 7. Sesuaikan `config.php`
 
-Buka `config.php` di server dan pastikan `host`/`port` benar dari sudut pandang **server IIS**:
+Pastikan `host`/`port` benar **dari sudut pandang server IIS**:
 - Jika IIS bisa me-resolve nama: `'host' => 'WIN-0UDHQPRP2VK\\GCS'`
 - Jika hanya lewat IP: `'host' => '192.168.100.2'`, `'port' => '49291'`
 
 Pastikan firewall server DB mengizinkan koneksi dari IP server IIS ke port SQL Server.
 
-## Langkah 8 — (SANGAT DISARANKAN) pakai user DB terbatas, bukan `sa`
+## 8. (SANGAT DISARANKAN) Pakai user DB terbatas, bukan `sa`
 
-Jalankan di SQL Server (SSMS), lalu ganti kredensial di `config.php` ke user ini:
-```sql
-USE GCS;
-CREATE LOGIN gcs_form_app WITH PASSWORD = 'GantiPasswordKuatDiSini!';
-CREATE USER gcs_form_app FOR LOGIN gcs_form_app;
-GRANT INSERT ON dbo.MST_PEGAWAI     TO gcs_form_app;
-GRANT INSERT ON dbo.MST_ANAK_PEGAWAI TO gcs_form_app;
--- (opsional) izin SELECT bila nanti ada halaman lihat data:
--- GRANT SELECT ON dbo.MST_PEGAWAI TO gcs_form_app;
--- GRANT SELECT ON dbo.MST_ANAK_PEGAWAI TO gcs_form_app;
+Jalankan skrip **`database/create_limited_user.sql`** di SSMS (ganti dulu password-nya). Skrip itu membuat login `gcs_form_app` dengan izin minimal:
+- `INSERT` ke `dbo.MST_PEGAWAI` & `dbo.MST_ANAK_PEGAWAI`
+- `SELECT` ke `easy.users` (dibutuhkan proses login)
+
+Lalu di `config.php`: `'username' => 'gcs_form_app'`, `'password' => '...'`.
+Ini membatasi kerusakan bila kredensial bocor (tidak bisa akses tabel lain / drop / ubah).
+
+## 9. HTTPS (wajib karena ada login + data pribadi)
+
+IIS Manager → **Bindings** → tambah **https** dengan sertifikat (perusahaan / Let's Encrypt via win-acme).
+Disarankan tambahkan redirect HTTP→HTTPS. Setelah HTTPS aktif, boleh perketat sesi di `php.ini`:
+```ini
+session.cookie_secure = 1
 ```
-Lalu di `config.php`: `'username' => 'gcs_form_app'`, `'password' => 'GantiPasswordKuatDiSini!'`.
-Ini membatasi kerusakan bila kredensial bocor (tidak bisa akses tabel lain / drop / dll).
 
-## Langkah 9 — HTTPS
-
-IIS Manager → **Bindings** → tambah **https** dengan sertifikat (dari perusahaan / Let's Encrypt via win-acme).
-Disarankan tambah redirect HTTP→HTTPS.
-
-## Langkah 10 — Uji
+## 10. Uji end-to-end
 
 1. Buka `https://<server>/gcs/login.php` → login pakai akun MyGCS (email atau `user_easy`).
-   - Form (`form_data_karyawan_gcs.php`) hanya bisa diakses **setelah login**; akses langsung tanpa sesi akan dialihkan ke halaman login.
-2. Isi form + unggah 1 lampiran → klik **Simpan Data**.
-3. Harus muncul "Data berhasil tersimpan ke database."
-4. Cek baris masuk di tabel `dbo.MST_PEGAWAI`.
-
-> **Autentikasi:** data akun diambil dari `GCS.easy.users` (password bcrypt/Laravel), hanya `status = 'Aktif'` yang boleh masuk. Karena itu user DB aplikasi butuh **SELECT** ke `easy.users` (lihat `database/create_limited_user.sql`).
+   - Akses `form_data_karyawan_gcs.php` tanpa login harus dialihkan ke `login.php`.
+2. Isi form + unggah 1 lampiran → **Simpan Data** → muncul "Data berhasil tersimpan ke database."
+3. Cek baris masuk di `dbo.MST_PEGAWAI` (dan `MST_ANAK_PEGAWAI` bila ada anak); berkas ada di `uploads/karyawan/`.
+4. Uji **duplikat**: input NIK/ID Karyawan yang sudah ada → harus ditolak.
+5. Uji **logout** → kembali ke halaman login.
 
 ---
 
-## Checklist cepat sebelum go-live publik
+## Checklist sebelum go-live
 
-- [ ] HTTPS aktif
+- [ ] `pdo_sqlsrv` & `sqlsrv` terbaca (`php -m`)
+- [ ] Handler `*.php` → FastCGI terpasang
+- [ ] Folder `uploads/karyawan` **dan** `session.save_path` writable oleh App Pool
 - [ ] `config.php` pakai **user DB terbatas** (bukan `sa`)
-- [ ] `display_errors = Off` di php.ini server
-- [ ] Folder `uploads/karyawan` writable oleh App Pool, tapi **tidak** bisa eksekusi skrip (sudah via `web.config`)
-- [ ] Akses form dibatasi (login/intranet) bila memungkinkan
-- [ ] Ada mekanisme anti-abuse (rate limit / captcha) bila benar-benar publik
+- [ ] `display_errors = Off`
+- [ ] **HTTPS** aktif (+ `session.cookie_secure=1`)
+- [ ] Login berhasil, form tersimpan, duplikat tertolak, logout jalan
+- [ ] (bila publik) ada anti-abuse (rate limit/captcha) & akses dibatasi ke user yang berhak
+
+---
+
+## Troubleshooting cepat
+
+| Gejala | Kemungkinan sebab | Solusi |
+|--------|-------------------|--------|
+| Halaman `.php` ter-download / tampil kode | Handler PHP belum terpasang | Ulangi Langkah 4 |
+| `HTTP 500` saat buka `.php` | php.ini/driver salah, atau FastCGI error | Lihat Event Viewer / log PHP; cek `php -m` |
+| Login selalu gagal walau password benar | Folder session tidak writable | Beri izin ke `session.save_path` (Langkah 6) |
+| "Gagal menyimpan data ke database" | Koneksi DB / kredensial / firewall | Cek `config.php`, port SQL, firewall (Langkah 7) |
+| Upload gagal untuk file besar | Batas ukuran | Cek `upload_max_filesize`/`post_max_size` (php.ini) & `maxAllowedContentLength` (web.config) |
+| Bisa mengakses `config.php` dari browser | web.config tidak terbaca | Pastikan Request Filtering aktif & web.config ikut tersalin |
 
 ---
 
 ## Kenapa `.htaccess` tidak dipakai di IIS
 
-`.htaccess` hanya berlaku di Apache. Di IIS, aturan setara ditulis di `web.config`.
-File `.htaccess` boleh dibiarkan (diabaikan IIS) — berguna jika suatu saat kembali ke Apache.
+`.htaccess` hanya untuk Apache. Di IIS, aturan setara ditulis di `web.config` (sudah disediakan).
+File `.htaccess` boleh dibiarkan (diabaikan IIS) — berguna bila suatu saat kembali ke Apache/XAMPP.
