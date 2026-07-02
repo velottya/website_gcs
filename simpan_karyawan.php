@@ -6,6 +6,8 @@ declare(strict_types=1);
 ini_set('display_errors', '0');
 
 header('Content-Type: application/json; charset=utf-8');
+require __DIR__ . '/auth.php';
+require_login_api();
 require __DIR__ . '/db.php';
 
 function respond(int $status, array $body): void {
@@ -94,6 +96,21 @@ function store_upload(string $inputName, array $allowedExt, int $maxSize, string
 }
 
 try {
+    $pdo = get_pdo();
+
+    // Cek duplikat NIK / ID Karyawan SEBELUM menyimpan berkas apa pun.
+    $dup = find_duplicates($pdo, $_POST['nik'], $_POST['id_karyawan']);
+    if ($dup['nik'] || $dup['id_karyawan']) {
+        $parts = [];
+        if ($dup['nik']) $parts[] = 'NIK KTP';
+        if ($dup['id_karyawan']) $parts[] = 'ID Karyawan';
+        respond(409, [
+            'success'   => false,
+            'duplicate' => $dup,
+            'message'   => implode(' dan ', $parts) . ' sudah terdaftar di database. Data tidak disimpan.',
+        ]);
+    }
+
     $fileKtp = store_upload('ktp', $allowedExt, $maxSize, $uploadDir, $savedFiles);
     $fileIjazah = store_upload('ijazah', $allowedExt, $maxSize, $uploadDir, $savedFiles);
     $fileBukuNikah = store_upload('buku_nikah', $allowedExt, $maxSize, $uploadDir, $savedFiles);
@@ -107,7 +124,6 @@ try {
         $childFiles[$i] = store_upload("anak{$i}_akta", $allowedExt, $maxSize, $uploadDir, $savedFiles);
     }
 
-    $pdo = get_pdo();
     $pdo->beginTransaction();
 
     $stmt = $pdo->prepare('

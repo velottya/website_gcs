@@ -117,10 +117,13 @@ Disarankan tambah redirect HTTP→HTTPS.
 
 ## Langkah 10 — Uji
 
-1. Buka `https://<server>/gcs/form_data_karyawan_gcs.html`
+1. Buka `https://<server>/gcs/login.php` → login pakai akun MyGCS (email atau `user_easy`).
+   - Form (`form_data_karyawan_gcs.php`) hanya bisa diakses **setelah login**; akses langsung tanpa sesi akan dialihkan ke halaman login.
 2. Isi form + unggah 1 lampiran → klik **Simpan Data**.
 3. Harus muncul "Data berhasil tersimpan ke database."
 4. Cek baris masuk di tabel `dbo.MST_PEGAWAI`.
+
+> **Autentikasi:** data akun diambil dari `GCS.easy.users` (password bcrypt/Laravel), hanya `status = 'Aktif'` yang boleh masuk. Karena itu user DB aplikasi butuh **SELECT** ke `easy.users` (lihat `database/create_limited_user.sql`).
 
 ---
 

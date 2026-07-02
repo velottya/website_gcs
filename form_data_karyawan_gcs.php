@@ -1,7 +1,9 @@
+<?php require __DIR__ . '/auth.php'; require_login(); $me = current_user(); ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Form Data Karyawan — MyGCS</title>
 <style>
   :root{
@@ -44,6 +46,7 @@
     width:160px;height:160px;
     border-radius:50%;
     background:radial-gradient(circle,rgba(201,162,75,.35),transparent 70%);
+    pointer-events:none;
   }
   .eyebrow{
     font-size:11px;
@@ -131,6 +134,11 @@
   }
   .field label .req{color:var(--danger);margin-left:3px;}
   .hint{font-size:11.5px;color:var(--ink-soft);margin-top:5px;}
+  .dup-msg{font-size:12px;margin-top:5px;display:none;}
+  .dup-msg.error{display:block;color:var(--danger);font-weight:600;}
+  .dup-msg.ok{display:block;color:#1a7f37;}
+  .dup-msg.checking{display:block;color:var(--ink-soft);}
+  input.input-error{border-color:var(--danger)!important;background:#fff5f5;}
 
   input[type=text],input[type=tel],input[type=email],input[type=date],select,textarea{
     width:100%;
@@ -246,13 +254,45 @@
     opacity:0;transition:.25s;pointer-events:none;
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  /* ====== Penyesuaian mobile ====== */
+  @media (max-width:640px){
+    body{padding:16px 12px 72px;}
+    .header{padding:22px 18px 20px;}
+    .header h1{font-size:20px;}
+    .header p{font-size:12.5px;}
+    .card{padding:18px 16px;}
+
+    /* Field yang berdampingan (Tempat/Tgl Lahir, RT/RW, HP/Email, dll) jadi menumpuk */
+    .field[style*="flex"]{flex-direction:column;gap:0!important;}
+    .field[style*="flex"] > div{margin-bottom:12px;}
+    .field[style*="flex"] > div:last-child{margin-bottom:0;}
+
+    /* Cegah iOS auto-zoom saat fokus input (butuh >=16px) */
+    input[type=text],input[type=tel],input[type=email],input[type=date],select,textarea{
+      font-size:16px;
+    }
+    .radio-opt{padding:10px 14px;font-size:13.5px;}
+    .toast{left:12px;right:12px;bottom:12px;transform:translateY(20px);text-align:center;}
+    .toast.show{transform:translateY(0);}
+  }
+  @media (max-width:380px){
+    .header h1{font-size:18px;}
+    .field[style*="flex"]{gap:0!important;}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
 
   <div class="header">
-    <div class="eyebrow">MyGCS · Dashboard Karyawan</div>
+    <div style="position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div class="eyebrow">MyGCS · Dashboard Karyawan</div>
+      <div style="font-size:12.5px;color:#fff;">
+        Masuk sebagai <b style="color:#fff;"><?= htmlspecialchars($me['name'] ?: $me['user_easy'], ENT_QUOTES) ?></b>
+        · <a href="logout.php" style="color:#ffb4a0;font-weight:600;text-decoration:none;">Keluar</a>
+      </div>
+    </div>
     <h1>Formulir Data Pribadi &amp; Data Keluarga</h1>
     <p>Lengkapi data berikut sesuai dokumen resmi. Field bertanda lampiran wajib diunggah agar data dapat diverifikasi oleh tim SDM.</p>
     <div class="gold-rule"></div>
@@ -278,11 +318,13 @@
       <div class="field">
         <label>NIK/ID Karyawan<span class="req">*</span></label>
         <input type="text" name="nik" required placeholder="16 digit NIK KTP">
+        <div class="dup-msg" id="dupNik"></div>
       </div>
 
       <div class="field">
         <label>ID Karyawan<span class="req">*</span></label>
         <input type="text" name="id_karyawan" required placeholder="ID internal PT GCS">
+        <div class="dup-msg" id="dupIdKaryawan"></div>
       </div>
 
       <div class="field" style="display:flex;gap:12px;">
@@ -728,6 +770,53 @@ document.querySelectorAll('input,select,textarea').forEach(el=>{
   el.addEventListener('change',updateProgress);
 });
 
+// ====== Deteksi duplikat NIK / ID Karyawan ======
+const dupState = { nik:false, id_karyawan:false };
+const nikInput = document.querySelector('input[name="nik"]');
+const idkInput = document.querySelector('input[name="id_karyawan"]');
+const dupNikMsg = document.getElementById('dupNik');
+const dupIdkMsg = document.getElementById('dupIdKaryawan');
+
+function setDupMsg(el, input, state, text){
+  el.className = 'dup-msg' + (state ? ' ' + state : '');
+  el.textContent = text || '';
+  if(state === 'error') input.classList.add('input-error');
+  else input.classList.remove('input-error');
+}
+function clearDupFeedback(){
+  dupState.nik = false; dupState.id_karyawan = false;
+  setDupMsg(dupNikMsg, nikInput, '', '');
+  setDupMsg(dupIdkMsg, idkInput, '', '');
+}
+
+async function checkDuplicate(field){
+  const val = (field === 'nik' ? nikInput.value : idkInput.value).trim();
+  const el = field === 'nik' ? dupNikMsg : dupIdkMsg;
+  const input = field === 'nik' ? nikInput : idkInput;
+  if(!val){ dupState[field] = false; setDupMsg(el, input, '', ''); return; }
+  const params = new URLSearchParams();
+  params.set(field === 'nik' ? 'nik' : 'id_karyawan', val);
+  setDupMsg(el, input, 'checking', 'Memeriksa…');
+  try{
+    const res = await fetch('cek_duplikat.php?' + params.toString());
+    if(res.status === 401){ window.location.href = 'login.php'; return; }
+    const data = await res.json();
+    if(data.error){ dupState[field] = false; setDupMsg(el, input, '', ''); return; }
+    const isDup = field === 'nik' ? data.nik : data.id_karyawan;
+    dupState[field] = isDup;
+    setDupMsg(el, input, isDup ? 'error' : 'ok',
+      isDup ? ((field==='nik'?'NIK KTP':'ID Karyawan') + ' ini sudah terdaftar di database.') : 'Tersedia ✓');
+  }catch(err){
+    dupState[field] = false; setDupMsg(el, input, '', '');
+  }
+}
+
+let nikTimer, idkTimer;
+nikInput.addEventListener('input', ()=>{ dupState.nik=false; clearTimeout(nikTimer); nikTimer=setTimeout(()=>checkDuplicate('nik'), 500); });
+idkInput.addEventListener('input', ()=>{ dupState.id_karyawan=false; clearTimeout(idkTimer); idkTimer=setTimeout(()=>checkDuplicate('id_karyawan'), 500); });
+nikInput.addEventListener('blur', ()=>checkDuplicate('nik'));
+idkInput.addEventListener('blur', ()=>checkDuplicate('id_karyawan'));
+
 document.getElementById('gcsForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const form = e.target;
@@ -750,6 +839,20 @@ document.getElementById('gcsForm').addEventListener('submit', async (e)=>{
   }
   if(!form.reportValidity()) return;
 
+  // Cek duplikat final sebelum kirim — blokir bila NIK / ID Karyawan sudah terdaftar.
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Memeriksa data...';
+  await Promise.all([checkDuplicate('nik'), checkDuplicate('id_karyawan')]);
+  if(dupState.nik || dupState.id_karyawan){
+    const w = [];
+    if(dupState.nik) w.push('NIK KTP');
+    if(dupState.id_karyawan) w.push('ID Karyawan');
+    showToast(w.join(' dan ') + ' sudah terdaftar. Data tidak dapat disimpan.', 3600);
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Simpan Data';
+    return;
+  }
+
   const formData = new FormData(form);
   if(!selProvinsi.disabled && selProvinsi.value){
     formData.set('provinsi', selProvinsi.options[selProvinsi.selectedIndex].text);
@@ -766,12 +869,18 @@ document.getElementById('gcsForm').addEventListener('submit', async (e)=>{
 
   try{
     const res = await fetch('simpan_karyawan.php', { method: 'POST', body: formData });
+    if(res.status === 401){ window.location.href = 'login.php'; return; }
     const result = await res.json();
     if(!res.ok || !result.success){
+      if(result.duplicate){
+        if(result.duplicate.nik){ dupState.nik = true; setDupMsg(dupNikMsg, nikInput, 'error', 'NIK KTP ini sudah terdaftar di database.'); }
+        if(result.duplicate.id_karyawan){ dupState.id_karyawan = true; setDupMsg(dupIdkMsg, idkInput, 'error', 'ID Karyawan ini sudah terdaftar di database.'); }
+      }
       throw new Error(result.message || 'Gagal menyimpan data.');
     }
     showToast('Data berhasil tersimpan ke database.', 2600);
     form.reset();
+    clearDupFeedback();
     document.querySelectorAll('.radio-row').forEach(r=>{
       delete r.dataset.selected;
       r.querySelectorAll('.radio-opt').forEach(o=>o.classList.remove('active'));

@@ -19,6 +19,9 @@ GO
 GRANT INSERT ON dbo.MST_PEGAWAI      TO gcs_form_app;
 GRANT INSERT ON dbo.MST_ANAK_PEGAWAI TO gcs_form_app;
 
+-- Login membaca data user dari easy.users (hanya SELECT, read-only)
+GRANT SELECT ON easy.users TO gcs_form_app;
+
 -- (Opsional) aktifkan bila nanti dibuat halaman untuk melihat data:
 -- GRANT SELECT ON dbo.MST_PEGAWAI      TO gcs_form_app;
 -- GRANT SELECT ON dbo.MST_ANAK_PEGAWAI TO gcs_form_app;
